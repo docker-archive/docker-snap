@@ -31,6 +31,7 @@ class ShellPlugin(snapcraft.BasePlugin):
 	def env(self, root):
 		return super().env(root) + [
 			'DESTDIR=' + self.installdir,
+			'SNAPDIR=' + self.builddir,
 		]
 
 	def build(self):
@@ -41,3 +42,5 @@ class ShellPlugin(snapcraft.BasePlugin):
 		] + self.options.shell_flags + [
 			'-c', self.options.shell_command,
 		])
+
+# vim:set ts=4 noet:
