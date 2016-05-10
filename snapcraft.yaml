@@ -22,14 +22,14 @@ parts:
     shell-flags: ['-ex']
     shell-command: |
       for patch in "$SNAPDIR"/patches/*.patch; do
-          patch -p1 -i "$patch"
+        patch -p1 -i "$patch"
       done
       
       export DOCKER_GITCOMMIT="$(
-          git ls-remote --tags \
-              https://github.com/docker/docker.git \
-              "refs/tags/v$(cat VERSION)^{}" \
-          | cut -b1-7
+        git ls-remote --tags \
+          https://github.com/docker/docker.git \
+          "refs/tags/v$(cat VERSION)^{}" \
+        | cut -b1-7
       )"
       
       export AUTO_GOPATH=1
