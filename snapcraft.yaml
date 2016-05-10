@@ -1,0 +1,32 @@
+name: docker
+version: 1.11.1-1
+summary: Docker Linux container runtime
+description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
+
+apps:
+  docker:
+    command: docker
+
+  dockerd:
+    command: docker daemon
+    daemon: simple
+
+parts:
+  docker:
+    plugin: shell
+    source: https://github.com/docker/docker.git
+    source-type: git
+    source-branch: v1.11.1
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      AUTO_GOPATH=1 ./hack/make.sh dynbinary
+      ls -l bundles/latest/*/
+      install -d "$DESTDIR/bin"
+      install -T "$(readlink -f bundles/latest/dynbinary/docker)" "$DESTDIR/bin/docker"
+    build-packages:
+      - btrfs-tools
+      - gcc
+      - golang-go
+      - libc6-dev
+      - libdevmapper-dev
