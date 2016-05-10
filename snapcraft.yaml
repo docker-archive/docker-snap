@@ -32,6 +32,8 @@ parts:
         | cut -b1-7
       )"
       
+      export DOCKER_BUILDTAGS='apparmor pkcs11 seccomp selinux'
+      
       export AUTO_GOPATH=1
       ./hack/make.sh dynbinary
       
