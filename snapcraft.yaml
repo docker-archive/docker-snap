@@ -50,4 +50,34 @@ parts:
       - libc6-dev
       - libdevmapper-dev
 
+  containerd:
+    plugin: shell
+    source: https://github.com/docker/containerd/archive/v0.2.1.tar.gz
+    source-type: tar
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      make
+      install -d "$DESTDIR/bin"
+      install -T bin/containerd "$DESTDIR/bin/docker-containerd"
+      install -T bin/containerd-shim "$DESTDIR/bin/docker-containerd-shim"
+      install -T bin/ctr "$DESTDIR/bin/docker-containerd-ctr"
+    build-packages:
+      - golang-go
+      - make
+
+  runc:
+    plugin: shell
+    source: https://github.com/opencontainers/runc/archive/v0.1.1.tar.gz
+    source-type: tar
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      make BUILDTAGS='seccomp apparmor selinux'
+      install -d "$DESTDIR/bin"
+      install -T runc "$DESTDIR/bin/docker-runc"
+    build-packages:
+      - golang-go
+      - make
+
 # vim:set et ts=2 sw=2:
