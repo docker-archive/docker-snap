@@ -1,3 +1,5 @@
+import os
+
 import snapcraft
 
 class ShellPlugin(snapcraft.BasePlugin):
@@ -31,7 +33,7 @@ class ShellPlugin(snapcraft.BasePlugin):
 	def env(self, root):
 		return super().env(root) + [
 			'DESTDIR=' + self.installdir,
-			'SNAPDIR=' + self.builddir,
+			'SNAPDIR=' + os.getcwd(),
 		]
 
 	def build(self):
