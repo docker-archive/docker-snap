@@ -23,9 +23,11 @@ parts:
     shell-command: |
       export DOCKER_GITCOMMIT="$(git ls-remote --tags https://github.com/docker/docker.git "refs/tags/v$(cat VERSION)^{}" | cut -b1-7)"
       AUTO_GOPATH=1 ./hack/make.sh dynbinary
+      dockerBin='bundles/latest/dynbinary/docker'
+      "$dockerBin" -v
       ls -l bundles/latest/*/
       install -d "$DESTDIR/bin"
-      install -T "$(readlink -f bundles/latest/dynbinary/docker)" "$DESTDIR/bin/docker"
+      install -T "$(readlink -f "$dockerBin")" "$DESTDIR/bin/docker"
     build-packages:
       - btrfs-tools
       - gcc
