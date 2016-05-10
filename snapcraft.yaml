@@ -57,7 +57,12 @@ parts:
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
-      make
+      mkdir -p .gopath/src/github.com/docker
+      ln -sfT "$PWD" .gopath/src/github.com/docker/containerd
+      export GOPATH="$PWD/.gopath"
+      
+      make GIT_COMMIT= GIT_BRANCH=
+      
       install -d "$DESTDIR/bin"
       install -T bin/containerd "$DESTDIR/bin/docker-containerd"
       install -T bin/containerd-shim "$DESTDIR/bin/docker-containerd-shim"
@@ -73,7 +78,12 @@ parts:
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
-      make BUILDTAGS='seccomp apparmor selinux'
+      mkdir -p .gopath/src/github.com/opencontainers
+      ln -sfT "$PWD" .gopath/src/github.com/opencontainers/runc
+      export GOPATH="$PWD/.gopath"
+      
+      make BUILDTAGS='seccomp apparmor selinux' COMMIT=
+      
       install -d "$DESTDIR/bin"
       install -T runc "$DESTDIR/bin/docker-runc"
     build-packages:
