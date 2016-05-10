@@ -51,6 +51,7 @@ parts:
       - golang-go
       - libc6-dev
       - libdevmapper-dev
+      - libltdl-dev
 
   containerd:
     plugin: shell
