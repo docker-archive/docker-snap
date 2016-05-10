@@ -21,8 +21,17 @@ parts:
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
-      export DOCKER_GITCOMMIT="$(git ls-remote --tags https://github.com/docker/docker.git "refs/tags/v$(cat VERSION)^{}" | cut -b1-7)"
-      AUTO_GOPATH=1 ./hack/make.sh dynbinary
+      for patch in "$SNAPDIR"/patches/*.patch; do
+          patch -p1 < "$patch"
+      done
+      export DOCKER_GITCOMMIT="$(
+          git ls-remote --tags \
+              https://github.com/docker/docker.git \
+              "refs/tags/v$(cat VERSION)^{}" \
+          | cut -b1-7
+      )"
+      export AUTO_GOPATH=1
+      ./hack/make.sh dynbinary
       dockerBin='bundles/latest/dynbinary/docker'
       "$dockerBin" -v
       ls -l bundles/latest/*/
