@@ -88,6 +88,7 @@ parts:
       install -T runc "$DESTDIR/bin/docker-runc"
     build-packages:
       - golang-go
+      - libseccomp-dev
       - make
 
 # vim:set et ts=2 sw=2:
