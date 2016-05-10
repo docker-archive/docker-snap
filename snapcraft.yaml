@@ -22,7 +22,7 @@ parts:
     shell-flags: ['-ex']
     shell-command: |
       for patch in "$SNAPDIR"/patches/*.patch; do
-          patch -p1 < "$patch"
+          patch -p1 -i "$patch"
       done
       export DOCKER_GITCOMMIT="$(
           git ls-remote --tags \
