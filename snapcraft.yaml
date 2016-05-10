@@ -6,20 +6,22 @@ description: Docker complements kernel namespacing with a high-level API which o
 apps:
   docker:
     command: docker
+    # TODO permissions
 
   dockerd:
     command: docker daemon
     daemon: simple
+    # TODO permissions
 
 parts:
   docker:
     plugin: shell
-    source: https://github.com/docker/docker.git
-    source-type: git
-    source-branch: v1.11.1
+    source: https://github.com/docker/docker/archive/v1.11.1.tar.gz
+    source-type: tar
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
+      export DOCKER_GITCOMMIT="$(git ls-remote --tags https://github.com/docker/docker.git "refs/tags/v$(cat VERSION)^{}" | cut -b1-7)"
       AUTO_GOPATH=1 ./hack/make.sh dynbinary
       ls -l bundles/latest/*/
       install -d "$DESTDIR/bin"
