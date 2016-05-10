@@ -49,3 +49,5 @@ parts:
       - golang-go
       - libc6-dev
       - libdevmapper-dev
+
+# vim:set et ts=2 sw=2:
