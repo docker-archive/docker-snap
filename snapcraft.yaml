@@ -9,11 +9,19 @@ apps:
     # TODO permissions
 
   dockerd:
-    command: docker daemon
+    command: dockerd-wrapper
     daemon: simple
     # TODO permissions
 
 parts:
+  snappy-bins:
+    plugin: shell
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      install -d "$DESTDIR/bin"
+      install -t "$DESTDIR/bin" "$SNAPDIR"/bin/*
+
   docker:
     plugin: shell
     source: https://github.com/docker/docker/archive/v1.11.1.tar.gz

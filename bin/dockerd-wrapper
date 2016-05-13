@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+yolo() {
+	"$@" > /dev/null 2>&1 || :
+}
+
+force_umount() {
+	yolo umount    "$1"
+	yolo umount -f "$1"
+	yolo umount -l "$1"
+}
+
+dir="$(mktemp -d)"
+trap "force_umount '$dir'; rm -rf '$dir'" EXIT
+# try mounting a few FS types to force the kernel to try loading modules
+for t in aufs overlay zfs; do
+	yolo mount -t "$t" /dev/null "$dir"
+	force_umount "$dir"
+done
+# inside our snap, we can't "modprobe" for whatever reason (probably no access to the .ko files)
+# so this forces the kernel itself to "modprobe" for these filesystems so that the modules we need are available to Docker
+rm -rf "$dir"
+trap - EXIT
+
+exec docker daemon "$@"
