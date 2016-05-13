@@ -21,6 +21,8 @@ parts:
     shell-command: |
       install -d "$DESTDIR/bin"
       install -t "$DESTDIR/bin" "$SNAPDIR"/bin/*
+    stage-packages:
+      - adduser
 
   docker:
     plugin: shell

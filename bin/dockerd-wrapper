@@ -23,4 +23,9 @@ done
 rm -rf "$dir"
 trap - EXIT
 
+# let's try adding the "docker" group, too
+if ! getent group docker > /dev/null 1>&2; then
+	addgroup --system docker || :
+fi
+
 exec docker daemon "$@"
