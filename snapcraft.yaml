@@ -1,5 +1,5 @@
 name: docker
-version: 1.11.1-1
+version: 1.11.2-1
 summary: Docker Linux container runtime
 description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
 
@@ -26,7 +26,7 @@ parts:
 
   docker:
     plugin: shell
-    source: https://github.com/docker/docker/archive/v1.11.1.tar.gz
+    source: https://github.com/docker/docker/archive/v1.11.2.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
