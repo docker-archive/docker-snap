@@ -65,7 +65,7 @@ parts:
 
   containerd:
     plugin: shell
-    source: https://github.com/docker/containerd/archive/v0.2.1.tar.gz
+    source: https://github.com/docker/containerd/archive/v0.2.2.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
