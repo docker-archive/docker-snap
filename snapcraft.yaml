@@ -33,17 +33,28 @@ parts:
     source: https://github.com/docker/docker/archive/v1.11.2.tar.gz
     source-type: tar
     shell: bash
-    shell-flags: ['-ex']
+    shell-flags: ['-eux', '-o', 'pipefail']
     shell-command: |
       for patch in "$SNAPDIR"/patches/*.patch; do
         patch -p1 -i "$patch"
       done
       
-      export DOCKER_GITCOMMIT="$(
-        git ls-remote --tags \
-          https://github.com/docker/docker.git \
-          "refs/tags/v$(cat VERSION)^{}" \
-        | cut -b1-7
+      # aww, can't use "git ls-remote" on launchpad:
+      #  fatal: unable to access 'https://github.com/docker/docker.git/': Could not resolve host: github.com
+      #export DOCKER_GITCOMMIT="$(
+      #  git ls-remote --tags \
+      #    https://github.com/docker/docker.git \
+      #    "refs/tags/v$(cat VERSION)^{}" \
+      #  | cut -b1-7
+      #)"
+      if git rev-parse &> /dev/null; then
+        export DOCKER_GITCOMMIT="snap-$(git rev-parse --short HEAD)"
+      else
+        export DOCKER_GITCOMMIT="v$(cat VERSION)-snap"
+      fi
+      export BUILDTIME="$(
+        date --rfc-3339 ns 2>/dev/null | sed -e 's/ /T/' \
+          || date -u
       )"
       
       export DOCKER_BUILDTAGS='apparmor pkcs11 seccomp selinux'
