@@ -1,9 +1,7 @@
 #!/bin/sh
 set -e
 
-# use SNAP_DATA for most "data" bits
-set -- \
-	--host="unix://$SNAP_DATA/run/docker.sock" \
-	"$@"
+: "${DOCKER_HOST:="unix://$SNAP_DATA/run/docker.sock"}"
+export DOCKER_HOST
 
 exec docker "$@"
