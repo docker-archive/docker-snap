@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+# use SNAP_DATA for most "data" bits
+set -- \
+	--host="unix://$SNAP_DATA/run/docker.sock" \
+	"$@"
+
+exec docker "$@"
