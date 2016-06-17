@@ -8,7 +8,7 @@ confinement: devmode
 
 apps:
   docker:
-    command: docker
+    command: docker-wrapper
     # TODO permissions
 
   dockerd:
@@ -25,7 +25,8 @@ parts:
       install -d "$DESTDIR/bin"
       install -t "$DESTDIR/bin" "$SNAPDIR"/bin/*
     stage-packages:
-      - adduser
+      #- adduser
+      - mount
 
   docker:
     plugin: shell
@@ -68,7 +69,9 @@ parts:
 
   containerd:
     plugin: shell
-    source: https://github.com/docker/containerd/archive/v0.2.2.tar.gz
+    #source: https://github.com/docker/containerd/archive/v0.2.2.tar.gz
+    source: https://github.com/docker/containerd/archive/9dc2b3273db42c75368988a3885a3afd770069d9.tar.gz
+    # https://github.com/docker/docker/blob/v1.11.2/Dockerfile#L254
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
@@ -77,7 +80,7 @@ parts:
       ln -sfT "$PWD" .gopath/src/github.com/docker/containerd
       export GOPATH="$PWD/.gopath"
       
-      make GIT_COMMIT= GIT_BRANCH=
+      make GIT_COMMIT= GIT_BRANCH= LDFLAGS=
       
       install -d "$DESTDIR/bin"
       install -T bin/containerd "$DESTDIR/bin/docker-containerd"

@@ -24,8 +24,25 @@ rm -rf "$dir"
 trap - EXIT
 
 # let's try adding the "docker" group, too
-if ! getent group docker > /dev/null 1>&2; then
-	addgroup --system docker || :
-fi
+#if ! getent group docker > /dev/null 1>&2; then
+#	addgroup --system docker || :
+#fi
+# TODO determine appropriate permissions
+
+# use SNAP_DATA for most "data" bits
+mkdir -p \
+	"$SNAP_DATA/run" \
+	"$SNAP_DATA/run/docker" \
+	"$SNAP_DATA/var-lib-docker"
+set -- \
+	--debug \
+	--log-level=debug \
+	\
+	--exec-root="$SNAP_DATA/run/docker" \
+	--graph="$SNAP_DATA/var-lib-docker" \
+	--host="unix://$SNAP_DATA/run/docker.sock" \
+	--pidfile="$SNAP_DATA/run/docker.pid" \
+	\
+	"$@"
 
 exec docker daemon "$@"

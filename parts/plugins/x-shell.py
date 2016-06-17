@@ -31,7 +31,10 @@ class ShellPlugin(snapcraft.BasePlugin):
 		return schema
 
 	def env(self, root):
-		return super().env(root) + [
+		# ensure we pass forward any "proxy" related environment variables
+		proxy_vars = [ (key + '=' + val) for key, val in os.environ.items() if "proxy" in key or "PROXY" in key ]
+
+		return super().env(root) + proxy_vars + [
 			'DESTDIR=' + self.installdir,
 			'SNAPDIR=' + os.getcwd(),
 		]
