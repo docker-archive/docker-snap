@@ -41,17 +41,17 @@ parts:
       
       # aww, can't use "git ls-remote" on launchpad:
       #  fatal: unable to access 'https://github.com/docker/docker.git/': Could not resolve host: github.com
-      #export DOCKER_GITCOMMIT="$(
-      #  git ls-remote --tags \
-      #    https://github.com/docker/docker.git \
-      #    "refs/tags/v$(cat VERSION)^{}" \
-      #  | cut -b1-7
-      #)"
+      DOCKER_GITCOMMIT="$(
+        git ls-remote --tags \
+          https://github.com/docker/docker.git \
+          "refs/tags/v$(cat VERSION)^{}" \
+        | cut -b1-7 \
+        || echo "v$(< VERSION)"
+      )-snap"
       if git rev-parse &> /dev/null; then
-        export DOCKER_GITCOMMIT="snap-$(git rev-parse --short HEAD)"
-      else
-        export DOCKER_GITCOMMIT="v$(cat VERSION)-snap"
+        DOCKER_GITCOMMIT+="-$(git rev-parse --short HEAD)"
       fi
+      export DOCKER_GITCOMMIT
       export BUILDTIME="$(
         date --rfc-3339 ns 2>/dev/null | sed -e 's/ /T/' \
           || date -u
