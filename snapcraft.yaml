@@ -8,12 +8,17 @@ confinement: devmode
 
 apps:
   docker:
-    command: docker-wrapper
+    command: docker-wrapper docker
     # TODO permissions
 
   dockerd:
     command: dockerd-wrapper
     daemon: simple
+    # TODO permissions
+
+  # TODO determine if we can "provide" a "docker-compose" in PATH directly (since this'll show up as "docker.compose" in the user PATH)
+  compose:
+    command: docker-wrapper docker-compose
     # TODO permissions
 
 parts:
@@ -122,5 +127,10 @@ parts:
       - libapparmor-dev
       - libseccomp-dev
       - make
+
+  compose:
+    plugin: python2
+    source: https://github.com/docker/compose/archive/1.7.1.tar.gz
+    source-type: tar
 
 # vim:set et ts=2 sw=2:
