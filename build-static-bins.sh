@@ -4,7 +4,8 @@ set -e
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 targetDir="$PWD/static-bins"
-mkdir -p "$targetDir"
+rm -rf "$targetDir"
+mkdir "$targetDir"
 
 parts=( docker containerd runc )
 snapcraft clean --step pull "${parts[@]}"
