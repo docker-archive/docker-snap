@@ -1,48 +1,58 @@
 diff --git a/vendor/src/github.com/docker/libnetwork/datastore/datastore.go b/vendor/src/github.com/docker/libnetwork/datastore/datastore.go
-index c15cd62..0deae90 100644
+index c15cd62..f1ccb33 100644
 --- a/vendor/src/github.com/docker/libnetwork/datastore/datastore.go
 +++ b/vendor/src/github.com/docker/libnetwork/datastore/datastore.go
-@@ -116,7 +116,7 @@ const (
+@@ -116,9 +116,10 @@ const (
  	LocalScope = "local"
  	// GlobalScope indicates to store the KV object in global datastore such as consul/etcd/zookeeper
  	GlobalScope   = "global"
 -	defaultPrefix = "/var/lib/docker/network/files"
-+	defaultPrefix = types.FilesDir()
  )
  
++var defaultPrefix = types.FilesDir()
++
  const (
+ 	// NetworkKeyPrefix is the prefix for network key in the kv store
+ 	NetworkKeyPrefix = "network"
 diff --git a/vendor/src/github.com/docker/libnetwork/sandbox_dns_unix.go b/vendor/src/github.com/docker/libnetwork/sandbox_dns_unix.go
-index c8b595e..9f5bb75 100644
+index c8b595e..8dcf80e 100644
 --- a/vendor/src/github.com/docker/libnetwork/sandbox_dns_unix.go
 +++ b/vendor/src/github.com/docker/libnetwork/sandbox_dns_unix.go
-@@ -17,7 +17,7 @@ import (
+@@ -16,8 +16,9 @@ import (
+ 	"github.com/docker/libnetwork/types"
  )
  
++var defaultPrefix = types.FilesDir()
++
  const (
 -	defaultPrefix = "/var/lib/docker/network/files"
-+	defaultPrefix = types.FilesDir()
  	dirPerm       = 0755
  	filePerm      = 0644
  )
 diff --git a/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_unix.go b/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_unix.go
-index 898cedd..ce8b3c7 100644
+index 898cedd..97a3e52 100644
 --- a/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_unix.go
 +++ b/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_unix.go
-@@ -15,7 +15,7 @@ import (
+@@ -15,7 +15,8 @@ import (
  	"github.com/opencontainers/runc/libcontainer/configs"
  )
  
 -const udsBase = "/var/lib/docker/network/files/"
-+const udsBase = types.FilesDir() + "/"
++var udsBase = types.FilesDir() + "/"
++
  const success = "success"
  
  // processSetKeyReexec is a private function that must be called only on an reexec path
 diff --git a/vendor/src/github.com/docker/libnetwork/types/types.go b/vendor/src/github.com/docker/libnetwork/types/types.go
-index 44ee563..461fb7d 100644
+index 44ee563..51512a4 100644
 --- a/vendor/src/github.com/docker/libnetwork/types/types.go
 +++ b/vendor/src/github.com/docker/libnetwork/types/types.go
-@@ -9,6 +9,20 @@ import (
+@@ -7,8 +7,24 @@ import (
+ 	"net"
+ 	"strconv"
  	"strings"
++
++	"os"
  )
  
 +// XXX hack hack hack
