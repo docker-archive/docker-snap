@@ -44,10 +44,10 @@ index 898cedd..97a3e52 100644
  
  // processSetKeyReexec is a private function that must be called only on an reexec path
 diff --git a/vendor/src/github.com/docker/libnetwork/types/types.go b/vendor/src/github.com/docker/libnetwork/types/types.go
-index 44ee563..51512a4 100644
+index 44ee563..6e3a129 100644
 --- a/vendor/src/github.com/docker/libnetwork/types/types.go
 +++ b/vendor/src/github.com/docker/libnetwork/types/types.go
-@@ -7,8 +7,24 @@ import (
+@@ -7,8 +7,26 @@ import (
  	"net"
  	"strconv"
  	"strings"
@@ -61,10 +61,12 @@ index 44ee563..51512a4 100644
 +func FilesDir() string {
 +	if snapData := os.Getenv("SNAP_DATA"); snapData != "" {
 +		// Ubuntu Snappy 16.04+
-+		return snapData + "/libnetwork/files"
++		return snapData + "/ln"
 +	} else if snapAppDataPath := os.Getenv("SNAP_APP_DATA_PATH"); snapAppDataPath != "" {
 +		// Ubuntu Snappy 15.04
-+		return snapAppDataPath + "/libnetwork/files"
++		return snapAppDataPath + "/ln"
++		// is just "/ln" because UNIX_PATH_MAX is 108 and SNAP_APP_DATA_PATH isn't exactly short :(
++		// see also https://github.com/docker/libnetwork/issues/747#issuecomment-232504914
 +	}
 +	return "/var/lib/docker/network/files"
 +}
