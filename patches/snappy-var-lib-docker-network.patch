@@ -1,0 +1,64 @@
+diff --git a/vendor/src/github.com/docker/libnetwork/datastore/datastore.go b/vendor/src/github.com/docker/libnetwork/datastore/datastore.go
+index c15cd62..0deae90 100644
+--- a/vendor/src/github.com/docker/libnetwork/datastore/datastore.go
++++ b/vendor/src/github.com/docker/libnetwork/datastore/datastore.go
+@@ -116,7 +116,7 @@ const (
+ 	LocalScope = "local"
+ 	// GlobalScope indicates to store the KV object in global datastore such as consul/etcd/zookeeper
+ 	GlobalScope   = "global"
+-	defaultPrefix = "/var/lib/docker/network/files"
++	defaultPrefix = types.FilesDir()
+ )
+ 
+ const (
+diff --git a/vendor/src/github.com/docker/libnetwork/sandbox_dns_unix.go b/vendor/src/github.com/docker/libnetwork/sandbox_dns_unix.go
+index c8b595e..9f5bb75 100644
+--- a/vendor/src/github.com/docker/libnetwork/sandbox_dns_unix.go
++++ b/vendor/src/github.com/docker/libnetwork/sandbox_dns_unix.go
+@@ -17,7 +17,7 @@ import (
+ )
+ 
+ const (
+-	defaultPrefix = "/var/lib/docker/network/files"
++	defaultPrefix = types.FilesDir()
+ 	dirPerm       = 0755
+ 	filePerm      = 0644
+ )
+diff --git a/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_unix.go b/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_unix.go
+index 898cedd..ce8b3c7 100644
+--- a/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_unix.go
++++ b/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_unix.go
+@@ -15,7 +15,7 @@ import (
+ 	"github.com/opencontainers/runc/libcontainer/configs"
+ )
+ 
+-const udsBase = "/var/lib/docker/network/files/"
++const udsBase = types.FilesDir() + "/"
+ const success = "success"
+ 
+ // processSetKeyReexec is a private function that must be called only on an reexec path
+diff --git a/vendor/src/github.com/docker/libnetwork/types/types.go b/vendor/src/github.com/docker/libnetwork/types/types.go
+index 44ee563..461fb7d 100644
+--- a/vendor/src/github.com/docker/libnetwork/types/types.go
++++ b/vendor/src/github.com/docker/libnetwork/types/types.go
+@@ -9,6 +9,20 @@ import (
+ 	"strings"
+ )
+ 
++// XXX hack hack hack
++// see also https://github.com/docker/libnetwork/issues/747
++// see also https://github.com/docker/docker/issues/18508
++func FilesDir() string {
++	if snapData := os.Getenv("SNAP_DATA"); snapData != "" {
++		// Ubuntu Snappy 16.04+
++		return snapData + "/libnetwork/files"
++	} else if snapAppDataPath := os.Getenv("SNAP_APP_DATA_PATH"); snapAppDataPath != "" {
++		// Ubuntu Snappy 15.04
++		return snapAppDataPath + "/libnetwork/files"
++	}
++	return "/var/lib/docker/network/files"
++}
++
+ // UUID represents a globally unique ID of various resources like network and endpoint
+ type UUID string
+ 
