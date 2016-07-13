@@ -37,7 +37,9 @@ export SNAPDIR="$PWD"
 	export GOPATH="$PWD/.gopath"
 
 	make static GIT_COMMIT= GIT_BRANCH= LDFLAGS=
-	
+
+	bin/containerd -v
+
 	install -T bin/containerd "$targetDir/docker-containerd"
 	install -T bin/containerd-shim "$targetDir/docker-containerd-shim"
 	install -T bin/ctr "$targetDir/docker-containerd-ctr"
@@ -51,6 +53,8 @@ export SNAPDIR="$PWD"
 	export GOPATH="$PWD/.gopath"
 
 	make static BUILDTAGS='seccomp apparmor selinux' COMMIT=
+
+	./runc -v
 
 	install -T runc "$targetDir/docker-runc"
 )
