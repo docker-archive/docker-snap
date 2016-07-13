@@ -1,0 +1,18 @@
+diff --git a/docker/daemon_unix.go b/docker/daemon_unix.go
+index b65eb1f..7a70612 100644
+--- a/docker/daemon_unix.go
++++ b/docker/daemon_unix.go
+@@ -49,6 +49,13 @@ func setDefaultUmask() error {
+ }
+ 
+ func getDaemonConfDir() string {
++	if snapData := os.Getenv("SNAP_DATA"); snapData != "" {
++		// Ubuntu Snappy 16.04+
++		return snapData + "/etc/docker"
++	} else if snapAppDataPath := os.Getenv("SNAP_APP_DATA_PATH"); snapAppDataPath != "" {
++		// Ubuntu Snappy 15.04
++		return snapAppDataPath + "/etc/docker"
++	}
+ 	return "/etc/docker"
+ }
+ 
