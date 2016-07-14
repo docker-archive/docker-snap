@@ -1,0 +1,25 @@
+diff --git a/profiles/apparmor/apparmor.go b/profiles/apparmor/apparmor.go
+index 51dfa5c..816e4d6 100644
+--- a/profiles/apparmor/apparmor.go
++++ b/profiles/apparmor/apparmor.go
+@@ -15,11 +15,19 @@ import (
+ 
+ var (
+ 	// profileDirectory is the file store for apparmor profiles and macros.
+-	profileDirectory = "/etc/apparmor.d"
++	profileDirectory = defaultProfileDirectory()
+ 	// defaultProfilePath is the default path for the apparmor profile to be saved.
+ 	defaultProfilePath = path.Join(profileDirectory, "docker")
+ )
+ 
++func defaultProfileDirectory() string {
++	if os.Getenv("SNAP_APP_DATA_PATH") != "" {
++		// Snappy 15.04+ has read-only /etc/apparmor.d, so we need to use /var/lib/apparmor/profiles instead
++		return "/var/lib/apparmor/profiles"
++	}
++	return "/etc/apparmor.d"
++}
++
+ // profileData holds information about the given profile for generation.
+ type profileData struct {
+ 	// Name is profile name.
