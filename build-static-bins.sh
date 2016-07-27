@@ -82,7 +82,7 @@ if [ "${wantPart[compose]}" ]; then
 (
 	cd parts/compose/src
 
-	baseImage='python:2'
+	baseImage='python:2.7'
 	case "$(dpkg --print-architecture)" in
 		armhf) baseImage="armhf/$baseImage" ;;
 		amd64) ;;
