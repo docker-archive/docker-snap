@@ -8,7 +8,7 @@ targetDir="$PWD/static-bins"
 # usage: $0 part [part ...]
 #    ie: $0 docker
 if [ "$#" -lt 1 ]; then
-	set -- docker containerd runc
+	set -- docker containerd runc compose
 	rm -rf "$targetDir" # if we're building all three, let's do it clean
 fi
 parts=( "$@" )
@@ -75,5 +75,49 @@ if [ "${wantPart[runc]}" ]; then
 	( set -x && ./runc -v )
 
 	install -T runc "$targetDir/docker-runc"
+)
+fi
+
+if [ "${wantPart[compose]}" ]; then
+(
+	cd parts/compose/src
+
+	baseImage='python:2'
+	case "$(dpkg --print-architecture)" in
+		armhf) baseImage="armhf/$baseImage" ;;
+		amd64) ;;
+		*) echo >&2 "error: unknown architecture"; exit 1 ;;
+	esac
+
+	composeBuild='docker-snap'
+	if git rev-parse &> /dev/null; then
+		composeBuild+="-$(git rev-parse --short HEAD)"
+	fi
+
+	cat > Dockerfile.static <<-EOF
+		FROM $baseImage
+
+		RUN pip install pyinstaller
+
+		WORKDIR /usr/src/compose
+
+		COPY requirements-build.txt ./
+		RUN pip install -r requirements-build.txt
+
+		COPY requirements.txt ./
+		RUN pip install -r requirements.txt
+
+		COPY . .
+		RUN pip install --no-deps .
+
+		RUN echo '$composeBuild' > compose/GITSHA
+		RUN pyinstaller docker-compose.spec
+	EOF
+
+	docker build --pull -t snap-docker:static-compose -f Dockerfile.static .
+	docker run -i --rm snap-docker:static-compose cat dist/docker-compose > "$targetDir/docker-compose"
+	chmod +x "$targetDir/docker-compose"
+
+	"$targetDir/docker-compose" --version
 )
 fi
