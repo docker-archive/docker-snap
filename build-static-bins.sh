@@ -82,7 +82,7 @@ if [ "${wantPart[compose]}" ]; then
 (
 	cd parts/compose/src
 
-	baseImage='python:2.7'
+	baseImage='python:2.7-slim'
 	case "$(dpkg --print-architecture)" in
 		armhf) baseImage="armhf/$baseImage" ;;
 		amd64) ;;
@@ -96,8 +96,6 @@ if [ "${wantPart[compose]}" ]; then
 
 	cat > Dockerfile.static <<-EOF
 		FROM $baseImage
-
-		RUN pip install pyinstaller
 
 		WORKDIR /usr/src/compose
 
