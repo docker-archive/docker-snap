@@ -109,8 +109,12 @@ if [ "${wantPart[compose]}" ]; then
 				libc6-dev \
 				zlib1g-dev \
 			' \
+			&& runDeps=' \
+				binutils \
+				upx-ucl \
+			' \
 			&& apt-get update \
-			&& apt-get install -y --no-install-recommends \$buildDeps \
+			&& apt-get install -y --no-install-recommends \$buildDeps \$runDeps \
 			&& rm -rf /var/lib/apt/lists/* \
 			&& pip install https://github.com/pyinstaller/pyinstaller/archive/501ad40fd22b2fca8cfee7652791323f5fd1754d.tar.gz \
 			&& apt-get purge -y --auto-remove \$buildDeps
