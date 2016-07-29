@@ -21,7 +21,7 @@ for part; do
 	wantPart[$part]=1
 done
 
-( set -x && snapcraft clean --step pull "${parts[@]}" )
+[ -z "${wantPart[docker]}" ] || ( set -x && snapcraft clean --step pull docker )
 ( set -x && snapcraft pull "${parts[@]}" )
 
 export SNAPDIR="$PWD"
