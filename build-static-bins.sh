@@ -94,13 +94,26 @@ if [ "${wantPart[compose]}" ]; then
 		composeBuild+="-$(git rev-parse --short HEAD)"
 	fi
 
+	#			&& pip install pyinstaller \
+	# we have to pull pyinstaller from a newer commit than 3.2 so that it both builds our bootloader on armhf and doesn't run into https://github.com/pyinstaller/pyinstaller/issues/1976
 	cat > Dockerfile.static <<-EOF
 		FROM $baseImage
 
 		WORKDIR /usr/src/compose
 
-		COPY requirements-build.txt ./
-		RUN pip install -r requirements-build.txt
+		#COPY requirements-build.txt ./
+		#RUN pip install -r requirements-build.txt
+		RUN set -ex \
+			&& buildDeps=' \
+				gcc \
+				libc6-dev \
+				zlib1g-dev \
+			' \
+			&& apt-get update \
+			&& apt-get install -y --no-install-recommends \$buildDeps \
+			&& rm -rf /var/lib/apt/lists/* \
+			&& pip install https://github.com/pyinstaller/pyinstaller/archive/501ad40fd22b2fca8cfee7652791323f5fd1754d.tar.gz \
+			&& apt-get purge -y --auto-remove \$buildDeps
 
 		COPY requirements.txt ./
 		RUN pip install -r requirements.txt
@@ -112,7 +125,7 @@ if [ "${wantPart[compose]}" ]; then
 		RUN pyinstaller docker-compose.spec
 	EOF
 
-	docker build --pull -t snap-docker:static-compose -f Dockerfile.static .
+	docker build -t snap-docker:static-compose -f Dockerfile.static .
 	docker run -i --rm snap-docker:static-compose cat dist/docker-compose > "$targetDir/docker-compose"
 	chmod +x "$targetDir/docker-compose"
 
