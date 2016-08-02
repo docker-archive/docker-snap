@@ -1,8 +1,8 @@
 diff --git a/profiles/apparmor/apparmor.go b/profiles/apparmor/apparmor.go
-index 51dfa5c..816e4d6 100644
+index 51dfa5c..4def938 100644
 --- a/profiles/apparmor/apparmor.go
 +++ b/profiles/apparmor/apparmor.go
-@@ -15,11 +15,19 @@ import (
+@@ -15,11 +15,23 @@ import (
  
  var (
  	// profileDirectory is the file store for apparmor profiles and macros.
@@ -13,8 +13,12 @@ index 51dfa5c..816e4d6 100644
  )
  
 +func defaultProfileDirectory() string {
-+	if os.Getenv("SNAP_APP_DATA_PATH") != "" {
-+		// Snappy 15.04+ has read-only /etc/apparmor.d, so we need to use /var/lib/apparmor/profiles instead
++	// Ubuntu Snappy has read-only /etc/apparmor.d
++	if snapData := os.Getenv("SNAP_DATA"); snapData != "" {
++		// Ubuntu Snappy 16.04+
++		return snapData + "/etc/apparmor.d"
++	} else if os.Getenv("SNAP_APP_DATA_PATH") != "" {
++		// Ubuntu Snappy 15.04+
 +		return "/var/lib/apparmor/profiles"
 +	}
 +	return "/etc/apparmor.d"
