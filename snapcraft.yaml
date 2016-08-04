@@ -22,7 +22,7 @@ apps:
     # "plugin: python" is setting /usr/bin/docker-compose's shebang thus:
     #   #!/build/docker/parts/compose/install/usr/bin/python2
     # https://github.com/snapcore/snapcraft/pull/680
-    command: docker-wrapper python2 docker-compose
+    command: docker-wrapper python2 /usr/bin/docker-compose
     # TODO permissions
 
 parts:
