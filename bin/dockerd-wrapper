@@ -6,28 +6,22 @@ yolo() {
 }
 
 force_umount() {
-	yolo umount    "$1"
-	yolo umount -f "$1"
-	yolo umount -l "$1"
+	yolo umount    "$@"
+	yolo umount -f "$@"
+	yolo umount -l "$@"
 }
 
 dir="$(mktemp -d)"
-trap "force_umount '$dir'; rm -rf '$dir'" EXIT
+trap "force_umount --no-mtab '$dir'; rm -rf '$dir'" EXIT
 # try mounting a few FS types to force the kernel to try loading modules
 for t in aufs overlay zfs; do
-	yolo mount -t "$t" /dev/null "$dir"
-	force_umount "$dir"
+	yolo mount --no-mtab -t "$t" /dev/null "$dir"
+	force_umount --no-mtab "$dir"
 done
 # inside our snap, we can't "modprobe" for whatever reason (probably no access to the .ko files)
 # so this forces the kernel itself to "modprobe" for these filesystems so that the modules we need are available to Docker
 rm -rf "$dir"
 trap - EXIT
-
-# let's try adding the "docker" group, too
-#if ! getent group docker > /dev/null 1>&2; then
-#	addgroup --system docker || :
-#fi
-# TODO determine appropriate permissions
 
 # use SNAP_DATA for most "data" bits
 mkdir -p \
@@ -40,7 +34,6 @@ set -- \
 	\
 	--exec-root="$SNAP_DATA/run/docker" \
 	--graph="$SNAP_DATA/var-lib-docker" \
-	--host="unix://$SNAP_DATA/run/docker.sock" \
 	--pidfile="$SNAP_DATA/run/docker.pid" \
 	\
 	"$@"

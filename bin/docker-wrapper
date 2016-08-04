@@ -1,7 +1,4 @@
 #!/bin/sh
 set -e
 
-: "${DOCKER_HOST:="unix://$SNAP_DATA/run/docker.sock"}"
-export DOCKER_HOST
-
 exec "$@"
