@@ -18,7 +18,10 @@ apps:
 
   # TODO determine if we can "provide" a "docker-compose" in PATH directly (since this'll show up as "docker.compose" in the user PATH)
   compose:
-    command: docker-wrapper docker-compose
+    # TODO remove explicit "python2" prefix here
+    # "plugin: python" is setting /usr/bin/docker-compose's shebang thus:
+    #   #!/build/docker/parts/compose/install/usr/bin/python2
+    command: docker-wrapper python2 docker-compose
     # TODO permissions
 
 parts:
