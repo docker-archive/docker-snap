@@ -59,6 +59,8 @@ parts:
       - libc6-dev
       - libdevmapper-dev
       - libltdl-dev
+    stage-packages:
+      - aufs-tools
 
   containerd:
     plugin: shell
