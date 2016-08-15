@@ -1,17 +1,21 @@
 diff --git a/profiles/apparmor/template.go b/profiles/apparmor/template.go
-index ada33bf..001eace 100644
+index ada33bf..39d3525 100644
 --- a/profiles/apparmor/template.go
 +++ b/profiles/apparmor/template.go
-@@ -42,5 +42,12 @@ profile {{.Name}} flags=(attach_disconnected,mediate_deleted) {
+@@ -42,5 +42,16 @@ profile {{.Name}} flags=(attach_disconnected,mediate_deleted) {
    # suppress ptrace denials when using 'docker ps' or using 'ps' inside a container
    ptrace (trace,read) peer=docker-default,
  {{end}}
 +
 +  # Ubuntu Snappy 15.04 tweaks
++  #   Allow the daemon to trace/signal containers
 +  ptrace (readby, tracedby) peer="docker_docker{,-daemon}_*",
 +  signal (receive) peer="docker_docker{,-daemon}_*",
 +  # Ubuntu Snappy 16-series tweaks
++  #   Allow the daemon to trace/signal containers
 +  ptrace (readby, tracedby) peer="snap.docker.dockerd",
 +  signal (receive) peer="snap.docker.dockerd",
++  #   Allow container processes to signal other container processes
++  signal (send, receive) peer=docker-default,
  }
  `
