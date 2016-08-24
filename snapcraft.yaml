@@ -59,6 +59,7 @@ parts:
       - libc6-dev
       - libdevmapper-dev
       - libltdl-dev
+      - patch
     stage-packages:
       - aufs-tools
 
