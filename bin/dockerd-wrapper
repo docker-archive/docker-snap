@@ -1,6 +1,14 @@
 #!/bin/sh
 set -e
 
+workaround_lp1626019() {
+    t=`egrep '/tmp/snap.rootfs_\w+ ' /proc/self/mountinfo | cut -d ' ' -f 5`
+    if [ -n "$t" ] && [ ! -e "$t" ]; then
+        mkdir -p "$t"
+        ln -s /sys "$t"/sys
+    fi
+}
+
 yolo() {
 	"$@" > /dev/null 2>&1 || :
 }
@@ -37,5 +45,7 @@ set -- \
 	--pidfile="$SNAP_DATA/run/docker.pid" \
 	\
 	"$@"
+
+workaround_lp1626019
 
 exec docker daemon "$@"
