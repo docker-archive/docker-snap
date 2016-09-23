@@ -1,25 +1,49 @@
 name: docker
-version: 1.11.2-5
+version: 1.11.2-5+1
 summary: Docker Linux container runtime
 description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
 
-confinement: devmode
-# TODO figure out proper confinement
+confinement: strict
+grade: devel
+
+plugs:
+  support:
+    interface: docker-support
+  privileged:
+    interface: docker-support
+    privileged-containers: true
+  docker-cli:
+    interface: docker
+slots:
+  docker-daemon:
+    interface: docker
 
 apps:
   docker:
     command: docker-wrapper docker
-    # TODO permissions
+    plugs:
+      - docker-cli
+      - network
+      - home
 
   dockerd:
     command: dockerd-wrapper
     daemon: simple
-    # TODO permissions
+    plugs:
+      - network-bind
+      - firewall-control
+      - support
+      - privileged
+    slots:
+      - docker-daemon
 
   # TODO determine if we can "provide" a "docker-compose" in PATH directly (since this'll show up as "docker.compose" in the user PATH)
   compose:
     command: docker-wrapper docker-compose
-    # TODO permissions
+    plugs:
+      - docker-cli
+      - network
+      - home
 
 parts:
   snappy-bins:
