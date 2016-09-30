@@ -90,9 +90,9 @@ parts:
   containerd:
     plugin: shell
     #source: https://github.com/docker/containerd/archive/v0.2.2.tar.gz
-    source: https://github.com/docker/containerd/archive/9dc2b3273db42c75368988a3885a3afd770069d9.tar.gz
+    #source: https://github.com/docker/containerd/archive/9dc2b3273db42c75368988a3885a3afd770069d9.tar.gz
     # https://github.com/docker/docker/blob/v1.11.2/Dockerfile#L254
-    source: https://github.com/docker-snap/containerd/archive/6d8eed6728be2770ede98927f393172972332320.tar.gz
+    source: https://github.com/docker-snap/containerd/archive/arm64-epoll-backport.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
