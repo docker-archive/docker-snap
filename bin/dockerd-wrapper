@@ -35,13 +35,13 @@ trap - EXIT
 mkdir -p \
 	"$SNAP_DATA/run" \
 	"$SNAP_DATA/run/docker" \
-	"$SNAP_DATA/var-lib-docker"
+	"$SNAP_COMMON/var-lib-docker"
 set -- \
 	--debug \
 	--log-level=debug \
 	\
 	--exec-root="$SNAP_DATA/run/docker" \
-	--graph="$SNAP_DATA/var-lib-docker" \
+	--graph="$SNAP_COMMON/var-lib-docker" \
 	--pidfile="$SNAP_DATA/run/docker.pid" \
 	\
 	"$@"
