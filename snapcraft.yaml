@@ -67,6 +67,7 @@ parts:
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F1831DDAFC42E99D
       add-apt-repository ppa:jonathonf/golang-1.7
       apt update
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F1831DDAFC42E99D
       apt remove -y golang-go
       apt install -y golang-1.7
       export GOROOT=/usr/lib/go-1.7
