@@ -64,12 +64,6 @@ parts:
     shell: bash
     shell-flags: ['-eux', '-o', 'pipefail']
     shell-command: |
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F1831DDAFC42E99D
-      add-apt-repository ppa:jonathonf/golang-1.7
-      apt update
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F1831DDAFC42E99D
-      apt remove -y golang-go
-      apt install -y golang-1.7
       export GOROOT=/usr/lib/go-1.7
       export PATH="$GOROOT/bin:$PATH"
       go version
@@ -100,6 +94,7 @@ parts:
       - patch
       - git
       - pkg-config
+      - golang-1.7
     stage-packages:
       - aufs-tools
 
