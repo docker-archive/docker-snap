@@ -99,6 +99,7 @@ parts:
       - libltdl-dev
       - patch
       - git
+      - pkg-config
     stage-packages:
       - aufs-tools
 
