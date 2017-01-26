@@ -64,6 +64,7 @@ parts:
     shell: bash
     shell-flags: ['-eux', '-o', 'pipefail']
     shell-command: |
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F1831DDAFC42E99D
       add-apt-repository ppa:jonathonf/golang-1.7
       apt update
       apt remove -y golang-go
