@@ -100,10 +100,7 @@ parts:
 
   containerd:
     plugin: shell
-    #source: https://github.com/docker/containerd/archive/v0.2.2.tar.gz
-    #source: https://github.com/docker/containerd/archive/9dc2b3273db42c75368988a3885a3afd770069d9.tar.gz
-    # https://github.com/docker/docker/blob/v1.11.2/Dockerfile#L254
-    source: https://github.com/docker-snap/containerd/archive/arm64-epoll-backport.tar.gz
+    source: https://github.com/docker/containerd/archive/d7975b89804b207b68f8b446cf1e2af72589bfcf.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
@@ -124,7 +121,7 @@ parts:
 
   runc:
     plugin: shell
-    source: https://github.com/opencontainers/runc/archive/v0.1.1.tar.gz
+    source: https://github.com/opencontainers/runc/archive/51371867a01c467f08af739783b8beafc154c4d7.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
