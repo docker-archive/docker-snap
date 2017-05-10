@@ -1,0 +1,205 @@
+name: docker
+version: 17.03.1-ce-0
+summary: Docker Linux container runtime
+description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
+
+confinement: strict
+grade: stable
+
+plugs:
+  support:
+    interface: docker-support
+  privileged:
+    interface: docker-support
+    privileged-containers: true
+  docker-cli:
+    interface: docker
+slots:
+  docker-daemon:
+    interface: docker
+
+apps:
+  docker:
+    command: docker-wrapper docker
+    plugs:
+      - docker-cli
+      - network
+      - home
+
+  dockerd:
+    command: dockerd-wrapper
+    daemon: simple
+    plugs:
+      - network-bind
+      - firewall-control
+      - support
+      - privileged
+      - account-control
+    slots:
+      - docker-daemon
+
+  # TODO determine if we can "provide" a "docker-compose" in PATH directly (since this'll show up as "docker.compose" in the user PATH)
+  compose:
+    command: docker-wrapper docker-compose
+    plugs:
+      - docker-cli
+      - network
+      - home
+  help:
+    command: help
+
+parts:
+  snappy-bins:
+    plugin: shell
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      install -d "$SNAPCRAFT_PART_INSTALL/bin"
+      install -t "$SNAPCRAFT_PART_INSTALL/bin" "$SNAPDIR"/bin/*
+    stage-packages:
+      - mount
+
+  go:
+    plugin: gobuild
+    source: https://storage.googleapis.com/golang/go1.7.5.src.tar.gz
+    source-type: tar
+    snap:
+      - -*
+    build-packages:
+      - golang-go
+      - rsync
+      - build-essential
+      - netbase
+      - python3-pyelftools
+
+  docker:
+    plugin: shell
+    source: https://github.com/docker/docker/archive/v17.03.1-ce.tar.gz
+    source-type: tar
+    shell: bash
+    shell-flags: ['-eux', '-o', 'pipefail']
+    shell-command: |
+      export GOROOT="$SNAPDIR/parts/go/install"
+      export PATH="$GOROOT/bin:$PATH"
+      go version
+
+      source "$SNAPDIR/prep-docker-build.sh"
+      
+      ./hack/make.sh dynbinary
+      
+      ls -l bundles/latest/*/
+      
+      clientBin='bundles/latest/dynbinary-client/docker'
+      daemonBin='bundles/latest/dynbinary-daemon/dockerd'
+      "$clientBin" -v
+      "$daemonBin" -v
+      "$clientBin" -v | grep -q -- "$DOCKER_GITCOMMIT"
+      "$daemonBin" -v | grep -q -- "$DOCKER_GITCOMMIT"
+      
+      install -d "$SNAPCRAFT_PART_INSTALL/bin"
+      install -T "$(readlink -f "$clientBin")" "$SNAPCRAFT_PART_INSTALL/bin/docker"
+      install -T "$(readlink -f "$daemonBin")" "$SNAPCRAFT_PART_INSTALL/bin/dockerd"
+    after:
+      - go
+    build-packages:
+      - btrfs-tools
+      - gcc
+      - libc6-dev
+      - libdevmapper-dev
+      - libltdl-dev
+      - patch
+      - git
+      - pkg-config
+    stage-packages:
+      - aufs-tools
+
+  containerd:
+    plugin: shell
+    source: https://github.com/docker/containerd/archive/4ab9917febca54791c5f071a9d1f404867857fcc.tar.gz
+    source-type: tar
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      export GOROOT="$SNAPDIR/parts/go/install"
+      export PATH="$GOROOT/bin:$PATH"
+      go version
+
+      mkdir -p .gopath/src/github.com/docker
+      ln -sfT "$PWD" .gopath/src/github.com/docker/containerd
+      export GOPATH="$PWD/.gopath"
+      
+      make GIT_COMMIT= GIT_BRANCH= LDFLAGS=
+      
+      install -d "$SNAPCRAFT_PART_INSTALL/bin"
+      install -T bin/containerd "$SNAPCRAFT_PART_INSTALL/bin/docker-containerd"
+      install -T bin/containerd-shim "$SNAPCRAFT_PART_INSTALL/bin/docker-containerd-shim"
+      install -T bin/ctr "$SNAPCRAFT_PART_INSTALL/bin/docker-containerd-ctr"
+    after:
+      - go
+    build-packages:
+      - make
+
+  runc:
+    plugin: shell
+    source: https://github.com/opencontainers/runc/archive/54296cf40ad8143b62dbcaa1d90e520a2136ddfe.tar.gz
+    source-type: tar
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      export GOROOT="$SNAPDIR/parts/go/install"
+      export PATH="$GOROOT/bin:$PATH"
+      go version
+
+      mkdir -p .gopath/src/github.com/opencontainers
+      ln -sfT "$PWD" .gopath/src/github.com/opencontainers/runc
+      export GOPATH="$PWD/.gopath"
+      
+      make BUILDTAGS='seccomp apparmor selinux' COMMIT=
+      
+      install -d "$SNAPCRAFT_PART_INSTALL/bin"
+      install -T runc "$SNAPCRAFT_PART_INSTALL/bin/docker-runc"
+    after:
+      - go
+    build-packages:
+      - libapparmor-dev
+      - libseccomp-dev
+      - make
+
+  libnetwork:
+    plugin: shell
+    # from https://github.com/docker/docker/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L9
+    source: https://github.com/docker/libnetwork/archive/0f534354b813003a754606689722fe253101bc4e.tar.gz
+    source-type: tar
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      export GOROOT="$SNAPDIR/parts/go/install"
+      export PATH="$GOROOT/bin:$PATH"
+      go version
+
+      mkdir -p .gopath/src/github.com/docker
+      ln -sfT "$PWD" .gopath/src/github.com/docker/libnetwork
+      export GOPATH="$PWD/.gopath"
+
+      go get github.com/tools/godep
+      export PATH="$GOPATH/bin/:$PATH"
+      godep version
+
+      make build-local
+
+      install -d "$SNAPCRAFT_PART_INSTALL/bin"
+      install -T bin/docker-proxy "$SNAPCRAFT_PART_INSTALL/bin/docker-proxy"
+      install -T bin/dnet "$SNAPCRAFT_PART_INSTALL/bin/dnet"
+    after:
+      - go
+    build-packages:
+      - iptables
+      - make
+
+  compose:
+    plugin: python
+    python-version: python2
+    source: https://github.com/docker/compose/archive/1.12.0.tar.gz
+    source-type: tar
+
+# vim:set et ts=2 sw=2:

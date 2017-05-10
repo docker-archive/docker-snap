@@ -1,11 +1,35 @@
 #!/bin/sh
 set -e
 
+default_socket_group=docker
+
+modify() {
+    sed -u "$1" "$2" > "$2".bak && mv "$2".bak "$2"
+}
+
 workaround_lp1626019() {
     t=`egrep '/snap\.\w+_snap\.docker.dockerd_\w+/tmp ' /proc/self/mountinfo | cut -d ' ' -f 5`
     if [ -n "$t" ] && [ ! -e "$t" ]; then
         mkdir -p "$t"
         ln -s /sys "$t"/sys
+    fi
+}
+
+workaround_lp1606510() {
+    [ ! -f /etc/lsb-release ] && return
+
+    name=`grep "DISTRIB_DESCRIPTION" /etc/lsb-release | cut -d '=' -f2 | sed 's/"*"//g'`
+    if [ "$name" = "Ubuntu Core 16" ]; then
+        default_socket_group=docker-snap
+        if [ ! $(getent group $default_socket_group) ]; then
+            useradd --system --extrausers --shell /bin/false --user-group -M --home-dir /nonexistent $default_socket_group
+
+            #Apply a workaround here as usermode doesn't support --extrausers option on core yet.
+            login_user=`cat /var/lib/extrausers/passwd | awk -F':' 'NR==1{print $1}'`
+
+            #We don't use sed -i as fchown32 is denied by seccomp profile.
+            modify "s/^\($default_socket_group:x:[0-9]\+:$\)\(.*\)/\1$login_user/g" /var/lib/extrausers/group
+        fi
     fi
 }
 
@@ -48,4 +72,6 @@ set -- \
 
 workaround_lp1626019
 
-exec docker daemon "$@"
+workaround_lp1606510
+
+exec dockerd -G $default_socket_group "$@"
