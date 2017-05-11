@@ -12,13 +12,11 @@ echo -e "\tsudo adduser $"USER" docker"
 echo -e "\tnewgrp docker"
 
 echo -e "\nOn Ubuntu Core 16, after installing the docker snap from store,"
-echo -e "Firstly, you need to connect the two interfaces as they're not auto-connected by default."
-echo -e "\tsudo snap connect docker:account-control :account-control"
+echo -e "Firstly, you need to connect the home interface as it's not auto-connected by default."
 echo -e "\tsudo snap connect docker:home :home"
 
-echo -e "\nSecondly, reload the snap and allows the user to login to the new group \"docker-snap\"."
+echo -e "\nSecondly, reload the snap to take effect."
 echo -e "\tsnap disable docker"
 echo -e "\tsnap enable  docker"
-echo -e "\tnewgrp docker-snap"
 
 echo -e "\nThen have fun with docker in snappy."

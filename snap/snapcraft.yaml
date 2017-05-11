@@ -34,7 +34,6 @@ apps:
       - firewall-control
       - support
       - privileged
-      - account-control
     slots:
       - docker-daemon
 
