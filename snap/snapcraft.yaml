@@ -1,5 +1,5 @@
 name: docker
-version: 17.03.1-ce-0
+version: 17.05.0-ce-0
 summary: Docker Linux container runtime
 description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
 
@@ -73,7 +73,7 @@ parts:
 
   docker:
     plugin: shell
-    source: https://github.com/docker/docker/archive/v17.03.1-ce.tar.gz
+    source: https://github.com/docker/docker/archive/v17.05.0-ce.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-eux', '-o', 'pipefail']
@@ -114,7 +114,7 @@ parts:
 
   containerd:
     plugin: shell
-    source: https://github.com/docker/containerd/archive/4ab9917febca54791c5f071a9d1f404867857fcc.tar.gz
+    source: https://github.com/docker/containerd/archive/9048e5e50717ea4497b757314bad98ea3763c145.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
@@ -140,7 +140,7 @@ parts:
 
   runc:
     plugin: shell
-    source: https://github.com/opencontainers/runc/archive/54296cf40ad8143b62dbcaa1d90e520a2136ddfe.tar.gz
+    source: https://github.com/opencontainers/runc/archive/9c2d8d184e5da67c95d601382adf14862e4f2228.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
@@ -166,8 +166,8 @@ parts:
 
   libnetwork:
     plugin: shell
-    # from https://github.com/docker/docker/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L9
-    source: https://github.com/docker/libnetwork/archive/0f534354b813003a754606689722fe253101bc4e.tar.gz
+    # from https://github.com/docker/docker/blob/v17.05.0-ce/hack/dockerfile/binaries-commits#L9
+    source: https://github.com/docker/libnetwork/archive/7b2b1feb1de4817d522cc372af149ff48d25028e.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
@@ -180,9 +180,9 @@ parts:
       ln -sfT "$PWD" .gopath/src/github.com/docker/libnetwork
       export GOPATH="$PWD/.gopath"
 
-      go get github.com/tools/godep
-      export PATH="$GOPATH/bin/:$PATH"
-      godep version
+      mkdir -p .gopath/src/
+      cp -av "$PWD/vendor/." .gopath/src/
+      rm -fr "$PWD/vendor"
 
       make build-local
 
