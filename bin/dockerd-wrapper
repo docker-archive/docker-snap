@@ -48,4 +48,4 @@ set -- \
 
 workaround_lp1626019
 
-exec docker daemon "$@"
+exec dockerd "$@"

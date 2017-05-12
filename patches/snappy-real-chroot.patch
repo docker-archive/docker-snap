@@ -1,0 +1,13 @@
+diff --git a/pkg/chrootarchive/archive_unix.go b/pkg/chrootarchive/archive_unix.go
+index f2325ab..84672cd 100644
+--- a/pkg/chrootarchive/archive_unix.go
++++ b/pkg/chrootarchive/archive_unix.go
+@@ -30,7 +30,7 @@ func untar() {
+ 		fatal(err)
+ 	}
+ 
+-	if err := chroot(flag.Arg(0)); err != nil {
++	if err := realChroot(flag.Arg(0)); err != nil {
+ 		fatal(err)
+ 	}
+ 

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+echo -e "Docker snap: Docker Linux container runtime.\n"
+
+echo -e "Due to the confinement issues on snappy, it requires some manual setup to make docker-snap works on your machine."
+echo -e "We'll take you through the steps needed to set up docker snap work for you on ubuntu core and ubuntu classic."
+
+echo -e "\nOn Ubuntu classic, before installing the docker snap, "
+echo -e "please run the following command to add the login user into docker group."
+echo -e "\tsudo addgroup --system docker"
+echo -e "\tsudo adduser $"USER" docker"
+echo -e "\tnewgrp docker"
+
+echo -e "\nOn Ubuntu Core 16, after installing the docker snap from store,"
+echo -e "Firstly, you need to connect the home interface as it's not auto-connected by default."
+echo -e "\tsudo snap connect docker:home :home"
+
+echo -e "\nSecondly, reload the snap to take effect."
+echo -e "\tsnap disable docker"
+echo -e "\tsnap enable  docker"
+
+echo -e "\nThen have fun with docker in snappy."

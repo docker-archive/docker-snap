@@ -1,0 +1,30 @@
+diff --git a/pkg/listeners/group_unix.go b/pkg/listeners/group_unix.go
+index e1d8774..e51437d 100644
+--- a/pkg/listeners/group_unix.go
++++ b/pkg/listeners/group_unix.go
+@@ -12,6 +12,10 @@ import (
+ 
+ const defaultSocketGroup = "docker"
+ 
++const (
++	unixExtrausersPath = "/var/lib/extrausers/group"
++)
++
+ func lookupGID(name string) (int, error) {
+ 	groupFile, err := user.GetGroupPath()
+ 	if err != nil {
+@@ -21,7 +25,13 @@ func lookupGID(name string) (int, error) {
+ 		return g.Name == name || strconv.Itoa(g.Gid) == name
+ 	})
+ 	if err != nil {
+-		return -1, errors.Wrapf(err, "error parsing groups for %s", name)
++		groups, err = user.ParseGroupFileFilter(unixExtrausersPath, func(g user.Group) bool {
++			return g.Name == name || strconv.Itoa(g.Gid) == name
++		})
++
++		if err != nil {
++			return -1, errors.Wrapf(err, "error parsing groups for %s", name)
++		}
+ 	}
+ 	if len(groups) > 0 {
+ 		return groups[0].Gid, nil
