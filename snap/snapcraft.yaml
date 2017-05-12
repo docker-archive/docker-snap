@@ -114,6 +114,7 @@ parts:
 
   containerd:
     plugin: shell
+    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L7
     source: https://github.com/docker/containerd/archive/4ab9917febca54791c5f071a9d1f404867857fcc.tar.gz
     source-type: tar
     shell: bash
@@ -140,6 +141,7 @@ parts:
 
   runc:
     plugin: shell
+    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L6
     source: https://github.com/opencontainers/runc/archive/54296cf40ad8143b62dbcaa1d90e520a2136ddfe.tar.gz
     source-type: tar
     shell: bash
@@ -194,6 +196,17 @@ parts:
     build-packages:
       - iptables
       - make
+
+  tini:
+    plugin: cmake
+    source: https://github.com/krallin/tini.git
+    source-type: git
+    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L8
+    source-commit: 949e6facb77383876aeff8a6944dde66b3089574
+    organize:
+      'bin/tini-static': bin/docker-init
+    prime:
+      - -bin/tini
 
   compose:
     plugin: python
