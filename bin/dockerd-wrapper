@@ -1,11 +1,20 @@
 #!/bin/sh
 set -e
 
+default_socket_group=docker
+
 workaround_lp1626019() {
     t=`egrep '/snap\.\w+_snap\.docker.dockerd_\w+/tmp ' /proc/self/mountinfo | cut -d ' ' -f 5`
     if [ -n "$t" ] && [ ! -e "$t" ]; then
         mkdir -p "$t"
         ln -s /sys "$t"/sys
+    fi
+}
+
+workaround_lp1606510() {
+    # ensure there's at least one member in the group.
+    if [ $(getent group docker-snap | awk -F':' '{print $NF}') ]; then
+        default_socket_group=docker-snap
     fi
 }
 
@@ -48,4 +57,6 @@ set -- \
 
 workaround_lp1626019
 
-exec docker daemon "$@"
+workaround_lp1606510
+
+exec dockerd -G $default_socket_group "$@"
