@@ -59,17 +59,16 @@ parts:
       - mount
 
   go:
-    plugin: gobuild
-    source: https://storage.googleapis.com/golang/go1.7.5.src.tar.gz
-    source-type: tar
-    snap:
-      - -*
+    plugin: shell
+    shell: bash
+    shell-flags: ['-ex']
+    shell-command: |
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F1831DDAFC42E99D
+      add-apt-repository ppa:gary-wzl77/docker-golang
+      apt update
+      apt install -y golang-1.8
     build-packages:
-      - golang-go
-      - rsync
-      - build-essential
-      - netbase
-      - python3-pyelftools
+      - software-properties-common
 
   docker:
     plugin: shell
@@ -78,7 +77,7 @@ parts:
     shell: bash
     shell-flags: ['-eux', '-o', 'pipefail']
     shell-command: |
-      export GOROOT="$SNAPDIR/parts/go/install"
+      export GOROOT=/usr/lib/go-1.8
       export PATH="$GOROOT/bin:$PATH"
       go version
 
@@ -120,7 +119,7 @@ parts:
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
-      export GOROOT="$SNAPDIR/parts/go/install"
+      export GOROOT=/usr/lib/go-1.8
       export PATH="$GOROOT/bin:$PATH"
       go version
 
@@ -147,7 +146,7 @@ parts:
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
-      export GOROOT="$SNAPDIR/parts/go/install"
+      export GOROOT=/usr/lib/go-1.8
       export PATH="$GOROOT/bin:$PATH"
       go version
 
@@ -174,7 +173,7 @@ parts:
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
-      export GOROOT="$SNAPDIR/parts/go/install"
+      export GOROOT=/usr/lib/go-1.8
       export PATH="$GOROOT/bin:$PATH"
       go version
 
