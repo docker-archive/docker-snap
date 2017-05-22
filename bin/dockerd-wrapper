@@ -3,6 +3,14 @@ set -e
 
 default_socket_group=docker
 
+default_domain_name=mydockerhub.com
+
+default_registry_cert_dir="$SNAP_COMMON/etc-docker-certs.d"
+
+default_domain_cert_dir="$SNAP_COMMON/certs"
+ssl_crt="$default_domain_cert_dir/domain.crt"
+ssl_key="$default_domain_cert_dir/domain.key"
+
 workaround_lp1626019() {
     t=`egrep '/snap\.\w+_snap\.docker.dockerd_\w+/tmp ' /proc/self/mountinfo | cut -d ' ' -f 5`
     if [ -n "$t" ] && [ ! -e "$t" ]; then
@@ -15,6 +23,15 @@ workaround_lp1606510() {
     # ensure there's at least one member in the group.
     if [ $(getent group docker-snap | awk -F':' '{print $NF}') ]; then
         default_socket_group=docker-snap
+    fi
+}
+
+generate_ssl_certificate() {
+    if [ ! -f $ssl_crt ] || [ ! -f $ssl_key ]; then
+        openssl req -newkey rsa:2048 -nodes -sha256 \
+                    -subj "/CN=$default_domain_name" \
+                    -x509 -days 365 -out $ssl_crt \
+                    -keyout $ssl_key
     fi
 }
 
@@ -44,7 +61,9 @@ trap - EXIT
 mkdir -p \
 	"$SNAP_DATA/run" \
 	"$SNAP_DATA/run/docker" \
-	"$SNAP_COMMON/var-lib-docker"
+	"$SNAP_COMMON/var-lib-docker" \
+	"$default_registry_cert_dir" \
+	"$default_domain_cert_dir"
 set -- \
 	--debug \
 	--log-level=debug \
@@ -52,11 +71,14 @@ set -- \
 	--exec-root="$SNAP_DATA/run/docker" \
 	--graph="$SNAP_COMMON/var-lib-docker" \
 	--pidfile="$SNAP_DATA/run/docker.pid" \
+	--registry-certificate-dir="$default_registry_cert_dir" \
 	\
 	"$@"
 
 workaround_lp1626019
 
 workaround_lp1606510
+
+generate_ssl_certificate
 
 exec dockerd -G $default_socket_group "$@"

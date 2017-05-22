@@ -1,0 +1,10 @@
+diff --git a/registry/config_unix.go b/registry/config_unix.go
+index d692e8e..811d73d 100644
+--- a/registry/config_unix.go
++++ b/registry/config_unix.go
+@@ -22,4 +22,5 @@ func cleanPath(s string) string {
+ // installCliPlatformFlags handles any platform specific flags for the service.
+ func (options *ServiceOptions) installCliPlatformFlags(flags *pflag.FlagSet) {
+ 	flags.BoolVar(&options.V2Only, "disable-legacy-registry", false, "Disable contacting legacy registries")
++	flags.StringVar(&CertsDir, "registry-certificate-dir", CertsDir, "The directory where registry certificates are stored")
+ }
