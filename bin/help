@@ -1,4 +1,16 @@
 #!/bin/bash
+
+source $SNAP/bin/settings
+
+keys=("domain_name" "registry_cert_dir" "cert_dir")
+desc_domain_name="Personalize your email by getting email addresses at a specific domain."
+desc_registry_cert_dir="The directory that docker client adds (self signed) certificates) to."
+desc_cert_dir="The directory that holds the certificates on registry server."
+
+key_domain_name=email-domain-name
+key_registry_cert_dir=registry-certificate-folder
+key_cert_dir=certificate-folder
+
 cat <<'EOF'
 Docker snap: Docker Linux container runtime.
 
@@ -20,4 +32,24 @@ Secondly, reload the snap to take effect.
     snap enable  docker
 
 Then have fun with docker in snappy.
+
+The configuration options can be changed by calling.
+    snap set docker <key name>='<key value>'
+    snap disable docker
+    snap enable  docker
+
+    all available keys can be found as following.
 EOF
+
+for key in "${keys[@]}"
+do
+    default_value="default_$key"
+    description="desc_$key"
+    key_name="key_$key"
+    echo -e "\t${!key_name}:   \t${!description}"
+    if [ "x" == "x${!key}" ]; then
+        echo -e "\t\tNo value set, using default value: '${!default_value}'"
+    else
+        echo -e "\t\tCurrent value set to: '${!key}', (default value: '${!default_value}')"
+    fi
+done

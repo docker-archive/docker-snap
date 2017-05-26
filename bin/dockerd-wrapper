@@ -1,15 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 default_socket_group=docker
 
-default_domain_name=mydockerhub.com
-
-default_registry_cert_dir="$SNAP_COMMON/etc-docker-certs.d"
-
-default_domain_cert_dir="$SNAP_COMMON/certs"
-ssl_crt="$default_domain_cert_dir/domain.crt"
-ssl_key="$default_domain_cert_dir/domain.key"
+source $SNAP/bin/read-settings
 
 workaround_lp1626019() {
     t=`egrep '/snap\.\w+_snap\.docker.dockerd_\w+/tmp ' /proc/self/mountinfo | cut -d ' ' -f 5`
@@ -27,9 +21,12 @@ workaround_lp1606510() {
 }
 
 generate_ssl_certificate() {
+    ssl_crt="$cert_dir/domain.crt"
+    ssl_key="$cert_dir/domain.key"
+
     if [ ! -f $ssl_crt ] || [ ! -f $ssl_key ]; then
         openssl req -newkey rsa:2048 -nodes -sha256 \
-                    -subj "/CN=$default_domain_name" \
+                    -subj "/CN=$domain_name" \
                     -x509 -days 365 -out $ssl_crt \
                     -keyout $ssl_key
     fi
@@ -62,8 +59,8 @@ mkdir -p \
 	"$SNAP_DATA/run" \
 	"$SNAP_DATA/run/docker" \
 	"$SNAP_COMMON/var-lib-docker" \
-	"$default_registry_cert_dir" \
-	"$default_domain_cert_dir"
+	"$registry_cert_dir" \
+	"$cert_dir"
 set -- \
 	--debug \
 	--log-level=debug \
@@ -71,7 +68,7 @@ set -- \
 	--exec-root="$SNAP_DATA/run/docker" \
 	--graph="$SNAP_COMMON/var-lib-docker" \
 	--pidfile="$SNAP_DATA/run/docker.pid" \
-	--registry-certificate-dir="$default_registry_cert_dir" \
+	--registry-certificate-dir="$registry_cert_dir" \
 	\
 	"$@"
 

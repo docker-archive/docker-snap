@@ -1,0 +1,18 @@
+#!/bin/sh
+
+keys="domain_name registry_cert_dir cert_dir"
+
+default_domain_name=mydockerhub.com
+default_registry_cert_dir="$SNAP_COMMON/etc-docker-certs.d"
+default_cert_dir="$SNAP_COMMON/certs"
+
+desc_domain_name="The domain name to create an email account."
+desc_registry_cert_dir="The directory that docker client adds (self signed) certificates to."
+desc_cert_dir="The directory that holds the certificates on registry server."
+
+key_domain_name=registry-domain-name
+key_registry_cert_dir=registry-certificate-folder
+key_cert_dir=certificate-folder
+
+custom_settings="$SNAP_COMMON/custom_settings.sh"
+[ -f $custom_settings ] && . $custom_settings
