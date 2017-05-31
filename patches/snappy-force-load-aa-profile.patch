@@ -15,7 +15,7 @@ index 2a418b2..fa9fe5b 100644
  
  		// Nothing to do.
 -		if loaded {
-+		if loaded && os.Getenv("DOCKER_FORCE_LOAD_AA_PROFILE") != "1" {
++		if loaded && os.Getenv("DOCKER_FORCE_LOAD_AA_PROFILE") != "" {
  			return nil
  		}
  
