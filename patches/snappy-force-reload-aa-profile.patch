@@ -1,0 +1,13 @@
+diff --git a/daemon/apparmor_default.go b/daemon/apparmor_default.go
+index 65a4f21..4f9f924 100644
+--- a/daemon/apparmor_default.go
++++ b/daemon/apparmor_default.go
+@@ -23,7 +23,7 @@ func ensureDefaultAppArmorProfile() error {
+ 		}
+ 
+ 		// Nothing to do.
+-		if loaded && (os.Getenv("DOCKER_FORCE_LOAD_AA_PROFILE") == "" || os.Getenv("DOCKER_FORCE_LOAD_AA_PROFILE") == "0") {
++		if loaded && (os.Getenv("DOCKER_FORCE_RELOAD_AA_PROFILE") == "" || os.Getenv("DOCKER_FORCE_RELOAD_AA_PROFILE") == "0") {
+ 			return nil
+ 		}
+ 
