@@ -2,15 +2,6 @@
 
 source $SNAP/bin/settings
 
-keys=("domain_name" "registry_cert_dir" "cert_dir")
-desc_domain_name="Personalize your email by getting email addresses at a specific domain."
-desc_registry_cert_dir="The directory that docker client adds (self signed) certificates) to."
-desc_cert_dir="The directory that holds the certificates on registry server."
-
-key_domain_name=email-domain-name
-key_registry_cert_dir=registry-certificate-folder
-key_cert_dir=certificate-folder
-
 cat <<'EOF'
 Docker snap: Docker Linux container runtime.
 
@@ -24,32 +15,60 @@ please run the following command to add the login user into docker group.
     newgrp docker
 
 On Ubuntu Core 16, after installing the docker snap from store,
-Firstly, you need to connect the home interface as it's not auto-connected by default.
+you need to connect the home interface as it's not auto-connected by default.
     sudo snap connect docker:home :home
-
-Secondly, reload the snap to take effect.
-    snap disable docker
-    snap enable  docker
 
 Then have fun with docker in snappy.
 
-The configuration options can be changed by calling.
+The configuration options can be changed by calling the following command.
     snap set docker <key name>='<key value>'
     snap disable docker
     snap enable  docker
 
-    all available keys can be found as following.
+All available keys can be found as following.
 EOF
 
-for key in "${keys[@]}"
-do
+for key in ${keys[@]}; do
     default_value="default_$key"
     description="desc_$key"
     key_name="key_$key"
-    echo -e "\t${!key_name}:   \t${!description}"
-    if [ "x" == "x${!key}" ]; then
+    echo -e "\t${!key_name}:  \t${!description}"
+    if [ -z "${!key}" ]; then
         echo -e "\t\tNo value set, using default value: '${!default_value}'"
     else
         echo -e "\t\tCurrent value set to: '${!key}', (default value: '${!default_value}')"
     fi
 done
+
+cat <<'EOF'
+
+To setup a secure private registry, a typical command to launch server as following.
+You can also follow the link here https://docs.docker.com/registry/deploying/ to setup it.
+
+    sudo docker run -d -p 5000:5000 \
+            --restart=always \
+            --name registry \
+            -v `YOUR_HOME`/auth:/auth \
+            -e "REGISTRY_AUTH=htpasswd" \
+            -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+            -e "REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd" \
+            -v `YOUR_HOME`/registry:/tmp/registry \
+            -v /var/snap/docker/common/certs:/certs  \
+            -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
+            -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+            registry:2
+
+A few things to be aware of when launching a registry server in snappy world.
+1. Due to strict confinement in snap, please place certs and auth folders in a
+   writable folder path. e.g $HOME.
+2. You need to create a directory on every docker client and copy domain.crt to
+   it before login registry server. The same reason above, the full path of directory
+   is /var/snap/docker/common/etc/certs.d instead of /etc/docker/certs.d mentioned below.
+   https://docs.docker.com/engine/security/certificates/#understanding-the-configuration
+3. We generate self-signed certificate right after the first installation.
+   You can find it under default folder path (/var/snap/docker/common/certs).
+   Please change it to the custom path if you modify default certs foler path.
+4. All above configuration options are related to registry server setup.
+   These changes require you to restart the server after snap is reloaded.
+
+EOF

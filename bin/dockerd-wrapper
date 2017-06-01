@@ -1,9 +1,21 @@
 #!/bin/bash
 set -e
 
+source $SNAP/bin/settings
+
 default_socket_group=docker
 
-source $SNAP/bin/read-settings
+read_settings() {
+    for key in ${keys[@]}; do
+        if [ -z "${!key}" ]; then
+            default_value="default_$key"
+            echo "using default value: $key='${!default_value}'"
+            export $key=${!default_value}
+        else
+            echo "using custom value: $key='${!key}'"
+        fi
+    done
+}
 
 workaround_lp1626019() {
     t=`egrep '/snap\.\w+_snap\.docker.dockerd_\w+/tmp ' /proc/self/mountinfo | cut -d ' ' -f 5`
@@ -27,8 +39,17 @@ generate_ssl_certificate() {
     if [ ! -f $ssl_crt ] || [ ! -f $ssl_key ]; then
         openssl req -newkey rsa:2048 -nodes -sha256 \
                     -subj "/CN=$domain_name" \
-                    -x509 -days 365 -out $ssl_crt \
+                    -x509 -days 3650 -out $ssl_crt \
                     -keyout $ssl_key
+    else
+        common_name=`openssl x509 -in $ssl_crt -noout -subject | sed 's/^.*CN=//'`
+
+        #if domain name is changed, we remove old certificates and generate it again
+        #with latest domain_name
+        if [ $domain_name != $common_name ]; then
+            rm $ssl_crt $ssl_key
+            generate_ssl_certificate
+        fi
     fi
 }
 
@@ -54,12 +75,13 @@ done
 rm -rf "$dir"
 trap - EXIT
 
+read_settings
+
 # use SNAP_DATA for most "data" bits
 mkdir -p \
 	"$SNAP_DATA/run" \
 	"$SNAP_DATA/run/docker" \
 	"$SNAP_COMMON/var-lib-docker" \
-	"$registry_cert_dir" \
 	"$cert_dir"
 set -- \
 	--debug \
@@ -68,7 +90,6 @@ set -- \
 	--exec-root="$SNAP_DATA/run/docker" \
 	--graph="$SNAP_COMMON/var-lib-docker" \
 	--pidfile="$SNAP_DATA/run/docker.pid" \
-	--registry-certificate-dir="$registry_cert_dir" \
 	\
 	"$@"
 

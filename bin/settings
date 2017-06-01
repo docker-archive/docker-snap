@@ -1,17 +1,16 @@
 #!/bin/sh
 
-keys="domain_name registry_cert_dir cert_dir"
+# we don't support to configure certs dir on registry server for the time being
+# and will enable it once the patch for configuring certs dir is merged into upstream.
+keys="domain_name cert_dir"
 
 default_domain_name=mydockerhub.com
-default_registry_cert_dir="$SNAP_COMMON/etc-docker-certs.d"
 default_cert_dir="$SNAP_COMMON/certs"
 
-desc_domain_name="The domain name to create an email account."
-desc_registry_cert_dir="The directory that docker client adds (self signed) certificates to."
-desc_cert_dir="The directory that holds the certificates on registry server."
+desc_domain_name="The fully qualified domain name that docker clients will use to reach registry server."
+desc_cert_dir="The directory that stores the certificates on registry server."
 
 key_domain_name=registry-domain-name
-key_registry_cert_dir=registry-certificate-folder
 key_cert_dir=certificate-folder
 
 custom_settings="$SNAP_COMMON/custom_settings.sh"
