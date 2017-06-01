@@ -56,8 +56,6 @@ parts:
     shell-command: |
       install -d "$SNAPCRAFT_PART_INSTALL/bin"
       install -t "$SNAPCRAFT_PART_INSTALL/bin" "$SNAPDIR"/bin/*
-      mkdir -p "$SNAPCRAFT_PART_INSTALL"/meta/hooks/
-      mv "$SNAPCRAFT_PART_INSTALL"/bin/configure "$SNAPCRAFT_PART_INSTALL"/meta/hooks/
     stage-packages:
       - mount
 

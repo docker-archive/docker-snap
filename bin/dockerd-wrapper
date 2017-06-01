@@ -1,21 +1,7 @@
 #!/bin/bash
 set -e
 
-source $SNAP/bin/settings
-
 default_socket_group=docker
-
-read_settings() {
-    for key in ${keys[@]}; do
-        if [ -z "${!key}" ]; then
-            default_value="default_$key"
-            echo "using default value: $key='${!default_value}'"
-            export $key=${!default_value}
-        else
-            echo "using custom value: $key='${!key}'"
-        fi
-    done
-}
 
 workaround_lp1626019() {
     t=`egrep '/snap\.\w+_snap\.docker.dockerd_\w+/tmp ' /proc/self/mountinfo | cut -d ' ' -f 5`
@@ -29,27 +15,6 @@ workaround_lp1606510() {
     # ensure there's at least one member in the group.
     if [ $(getent group docker-snap | awk -F':' '{print $NF}') ]; then
         default_socket_group=docker-snap
-    fi
-}
-
-generate_ssl_certificate() {
-    ssl_crt="$cert_dir/domain.crt"
-    ssl_key="$cert_dir/domain.key"
-
-    if [ ! -f $ssl_crt ] || [ ! -f $ssl_key ]; then
-        openssl req -newkey rsa:2048 -nodes -sha256 \
-                    -subj "/CN=$domain_name" \
-                    -x509 -days 3650 -out $ssl_crt \
-                    -keyout $ssl_key
-    else
-        common_name=`openssl x509 -in $ssl_crt -noout -subject | sed 's/^.*CN=//'`
-
-        #if domain name is changed, we remove old certificates and generate it again
-        #with latest domain_name
-        if [ $domain_name != $common_name ]; then
-            rm $ssl_crt $ssl_key
-            generate_ssl_certificate
-        fi
     fi
 }
 
@@ -75,14 +40,11 @@ done
 rm -rf "$dir"
 trap - EXIT
 
-read_settings
-
 # use SNAP_DATA for most "data" bits
 mkdir -p \
 	"$SNAP_DATA/run" \
 	"$SNAP_DATA/run/docker" \
-	"$SNAP_COMMON/var-lib-docker" \
-	"$cert_dir"
+	"$SNAP_COMMON/var-lib-docker"
 set -- \
 	--debug \
 	--log-level=debug \
@@ -96,7 +58,5 @@ set -- \
 workaround_lp1626019
 
 workaround_lp1606510
-
-generate_ssl_certificate
 
 exec dockerd -G $default_socket_group "$@"
