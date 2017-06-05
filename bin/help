@@ -18,28 +18,4 @@ you need to connect the home interface as it's not auto-connected by default.
 
 Then have fun with docker in snappy.
 
-To setup a secure private registry, a typical command to launch server as following.
-You can also follow the link here https://docs.docker.com/registry/deploying/ to setup it.
-
-    sudo docker run -d -p 5000:5000 \
-            --restart=always \
-            --name registry \
-            -v `YOUR_HOME`/auth:/auth \
-            -e "REGISTRY_AUTH=htpasswd" \
-            -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
-            -e "REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd" \
-            -v `YOUR_HOME`/registry:/tmp/registry \
-            -v /var/snap/docker/common/certs:/certs  \
-            -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
-            -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
-            registry:2
-
-A few things to be aware of when launching a registry server in snappy world.
-1. When generating certificates by using openssl or creating a password file, 
-   please place certs and auth directory in a writable directory path. e.g $HOME.
-2. For secure private registry server, you need to create a directory on every docker client and copy domain.crt 
-   to the directory before login to registry server as mentioned here(https://docs.docker.com/engine/security/certificates/#understanding-the-configuration).
-   However, the full path of directory is /var/snap/docker/common/etc/certs.d instead of /etc/docker/certs.d as /etc is read-only in snappy.
-   We might probably support certificate directory configurable in the future via hooks(https://github.com/snapcore/snapd/wiki/hooks).
-
 EOF
