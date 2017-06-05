@@ -3,6 +3,18 @@ set -e
 
 default_socket_group=docker
 
+aa_profile_reloaded="$SNAP_COMMON/profile_reloaded"
+
+workaround_apparmor_profile_reload() {
+    #https://github.com/docker/docker-snap/issues/4
+    if [ ! -f "$aa_profile_refreshed" ]; then
+        if [ "$(grep -c 'docker-default (enforce)' /sys/kernel/security/apparmor/profiles)" -ge 1 ]; then
+            export DOCKER_AA_RELOAD=1
+            touch $aa_profile_reloaded
+        fi
+    fi
+}
+
 workaround_lp1626019() {
     t=`egrep '/snap\.\w+_snap\.docker.dockerd_\w+/tmp ' /proc/self/mountinfo | cut -d ' ' -f 5`
     if [ -n "$t" ] && [ ! -e "$t" ]; then
@@ -58,5 +70,7 @@ set -- \
 workaround_lp1626019
 
 workaround_lp1606510
+
+workaround_apparmor_profile_reload
 
 exec dockerd -G $default_socket_group "$@"
