@@ -1,4 +1,5 @@
 #!/bin/bash
+
 cat <<'EOF'
 Docker snap: Docker Linux container runtime.
 
@@ -12,12 +13,9 @@ please run the following command to add the login user into docker group.
     newgrp docker
 
 On Ubuntu Core 16, after installing the docker snap from store,
-Firstly, you need to connect the home interface as it's not auto-connected by default.
+you need to connect the home interface as it's not auto-connected by default.
     sudo snap connect docker:home :home
 
-Secondly, reload the snap to take effect.
-    snap disable docker
-    snap enable  docker
-
 Then have fun with docker in snappy.
+
 EOF
