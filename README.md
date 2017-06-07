@@ -23,8 +23,7 @@ If you are using an alternative snap-compatible Linux distribution ("classic" in
 
       $ sudo addgroup --system docker
       $ sudo adduser $USER docker
-
-* Logout and login for the change to take effect.
+      $ newgrp docker
 
 * You will also need to disable and re-enable the `docker` snap if you added the group while it was running.
 
