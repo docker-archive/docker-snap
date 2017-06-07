@@ -35,6 +35,9 @@ If you are using an alternative snap-compatible Linux distribution ("classic" in
 Docker should function normally, with the following caveats:
 
 * All files that `docker` needs access to should live within your `$HOME` folder.
+
+  * If you are using Ubuntu Core 16, you'll need to work within a subfolder of `$HOME` that is readable by root. https://github.com/docker/docker-snap/issues/8
+
 * `docker-compose` is available as `docker.compose` due to snap naming restrictions.
 * Additional certificates used by the Docker daemon to authenticate with registries need to be located in `/var/snap/docker/common/etc/certs.d` instead of `/etc/docker/certs.d`.
 
