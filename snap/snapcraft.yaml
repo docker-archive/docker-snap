@@ -1,5 +1,5 @@
 name: docker
-version: 17.03.1-ce-2
+version: 17.06.0-ce-rc4
 summary: Docker Linux container runtime
 description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
 
@@ -63,7 +63,7 @@ parts:
     plugin: gobuild
     source: https://storage.googleapis.com/golang/go1.8.3.src.tar.gz
     source-type: tar
-    snap:
+    prime:
       - -*
     build-packages:
       - golang-go
@@ -74,7 +74,7 @@ parts:
 
   docker:
     plugin: shell
-    source: https://github.com/docker/docker/archive/v17.03.1-ce.tar.gz
+    source: https://github.com/docker/docker-ce/archive/v17.06.0-ce-rc4.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-eux', '-o', 'pipefail']
@@ -84,18 +84,23 @@ parts:
       go version
 
       source "$SNAPDIR/prep-docker-build.sh"
-      
+      pushd ./components/engine
       ./hack/make.sh dynbinary
-      
-      ls -l bundles/latest/*/
-      
-      clientBin='bundles/latest/dynbinary-client/docker'
-      daemonBin='bundles/latest/dynbinary-daemon/dockerd'
+      popd
+      ls -l ./components/engine/bundles/latest/*/
+
+      mkdir -p .gopath/src/github.com/docker
+      export GOPATH="$PWD/.gopath"
+      unset LDFLAGS
+      ln -s "$PWD/components/cli" .gopath/src/github.com/docker/cli
+      pushd .gopath/src/github.com/docker/cli
+      make dynbinary
+      popd
+
+      clientBin='.gopath/src/github.com/docker/cli/build/docker'
+      daemonBin='components/engine/bundles/latest/dynbinary-daemon/dockerd'
       "$clientBin" -v
       "$daemonBin" -v
-      "$clientBin" -v | grep -q -- "$DOCKER_GITCOMMIT"
-      "$daemonBin" -v | grep -q -- "$DOCKER_GITCOMMIT"
-      
       install -d "$SNAPCRAFT_PART_INSTALL/bin"
       install -T "$(readlink -f "$clientBin")" "$SNAPCRAFT_PART_INSTALL/bin/docker"
       install -T "$(readlink -f "$daemonBin")" "$SNAPCRAFT_PART_INSTALL/bin/dockerd"
@@ -115,22 +120,21 @@ parts:
 
   containerd:
     plugin: shell
-    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L7
-    source: https://github.com/docker/containerd/archive/4ab9917febca54791c5f071a9d1f404867857fcc.tar.gz
+    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce-rc4/components/engine/hack/dockerfile/binaries-commits
+    source: https://github.com/containerd/containerd/archive/cfb82a876ecc11b5ca0977d1733adbe58599088a.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
       export GOROOT="$SNAPDIR/parts/go/install"
       export PATH="$GOROOT/bin:$PATH"
-      go version
 
-      mkdir -p .gopath/src/github.com/docker
-      ln -sfT "$PWD" .gopath/src/github.com/docker/containerd
+      mkdir -p .gopath/src/github.com/containerd
+      ln -sfT "$PWD" .gopath/src/github.com/containerd/containerd
       export GOPATH="$PWD/.gopath"
-      
+
       make GIT_COMMIT= GIT_BRANCH= LDFLAGS=
-      
+
       install -d "$SNAPCRAFT_PART_INSTALL/bin"
       install -T bin/containerd "$SNAPCRAFT_PART_INSTALL/bin/docker-containerd"
       install -T bin/containerd-shim "$SNAPCRAFT_PART_INSTALL/bin/docker-containerd-shim"
@@ -142,8 +146,8 @@ parts:
 
   runc:
     plugin: shell
-    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L6
-    source: https://github.com/opencontainers/runc/archive/54296cf40ad8143b62dbcaa1d90e520a2136ddfe.tar.gz
+    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce-rc4/components/engine/hack/dockerfile/binaries-commits
+    source: https://github.com/opencontainers/runc/archive/2d41c047c83e09a6d61d464906feb2a2f3c52aa4.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
@@ -155,9 +159,13 @@ parts:
       mkdir -p .gopath/src/github.com/opencontainers
       ln -sfT "$PWD" .gopath/src/github.com/opencontainers/runc
       export GOPATH="$PWD/.gopath"
-      
+      #export PATH="$GOPATH/bin:$PATH"
+      #go get github.com/LK4D4/vndr
+      pushd .gopath/src/github.com/opencontainers/runc
+      #vndr
       make BUILDTAGS='seccomp apparmor selinux' COMMIT=
-      
+      popd
+
       install -d "$SNAPCRAFT_PART_INSTALL/bin"
       install -T runc "$SNAPCRAFT_PART_INSTALL/bin/docker-runc"
     after:
@@ -169,25 +177,22 @@ parts:
 
   libnetwork:
     plugin: shell
-    # from https://github.com/docker/docker/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L9
-    source: https://github.com/docker/libnetwork/archive/0f534354b813003a754606689722fe253101bc4e.tar.gz
+    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce-rc4/components/engine/hack/dockerfile/binaries-commits
+    source: https://github.com/docker/libnetwork/archive/7b2b1feb1de4817d522cc372af149ff48d25028e.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-ex']
     shell-command: |
       export GOROOT="$SNAPDIR/parts/go/install"
       export PATH="$GOROOT/bin:$PATH"
-      go version
 
       mkdir -p .gopath/src/github.com/docker
       ln -sfT "$PWD" .gopath/src/github.com/docker/libnetwork
       export GOPATH="$PWD/.gopath"
 
-      go get github.com/tools/godep
-      export PATH="$GOPATH/bin/:$PATH"
-      godep version
-
+      pushd .gopath/src/github.com/docker/libnetwork
       make build-local
+      popd
 
       install -d "$SNAPCRAFT_PART_INSTALL/bin"
       install -T bin/docker-proxy "$SNAPCRAFT_PART_INSTALL/bin/docker-proxy"
@@ -202,7 +207,7 @@ parts:
     plugin: cmake
     source: https://github.com/krallin/tini.git
     source-type: git
-    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L8
+    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce-rc4/components/engine/hack/dockerfile/binaries-commits
     source-commit: 949e6facb77383876aeff8a6944dde66b3089574
     organize:
       'bin/tini-static': bin/docker-init
@@ -212,7 +217,7 @@ parts:
   compose:
     plugin: python
     python-version: python2
-    source: https://github.com/docker/compose/archive/1.13.0.tar.gz
+    source: https://github.com/docker/compose/archive/1.14.0-rc2.tar.gz
     source-type: tar
 
 # vim:set et ts=2 sw=2:

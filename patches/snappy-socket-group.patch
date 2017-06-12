@@ -1,44 +1,23 @@
-diff --git a/vendor/github.com/docker/go-connections/sockets/unix_socket.go b/vendor/github.com/docker/go-connections/sockets/unix_socket.go
-index d162734..92fe0ac 100644
---- a/vendor/github.com/docker/go-connections/sockets/unix_socket.go
-+++ b/vendor/github.com/docker/go-connections/sockets/unix_socket.go
-@@ -13,6 +13,10 @@ import (
- 	"github.com/opencontainers/runc/libcontainer/user"
+--- a/pkg/listeners/group_unix.go	2017-06-16 21:34:02.815267579 +0000
++++ b/pkg/listeners/group_unix.go	2017-06-16 21:34:02.775269611 +0000
+@@ -11,6 +11,7 @@
  )
  
-+const (
-+	unixExtrausersPath = "/var/lib/extrausers/group"
-+)
-+
- // NewUnixSocket creates a unix socket with the specified path and group.
- func NewUnixSocket(path, group string) (net.Listener, error) {
- 	if err := syscall.Unlink(path); err != nil && !os.IsNotExist(err) {
-@@ -49,19 +53,22 @@ func setSocketGroup(path, group string) error {
- }
+ const defaultSocketGroup = "docker"
++const unixExtrausersPath = "/var/lib/extrausers/group"
  
- func changeGroup(path string, nameOrGid string) error {
--	gid, err := lookupGidByName(nameOrGid)
-+	groupFile, err := user.GetGroupPath()
- 	if err != nil {
- 		return err
- 	}
-+	gid, err := lookupGidByName(nameOrGid, groupFile)
-+	if err != nil {
-+		gid, err = lookupGidByName(nameOrGid, unixExtrausersPath)
-+		if err != nil {
-+			return err
-+		}
-+	}
- 	logrus.Debugf("%s group found. gid: %d", nameOrGid, gid)
- 	return os.Chown(path, 0, gid)
- }
- 
--func lookupGidByName(nameOrGid string) (int, error) {
--	groupFile, err := user.GetGroupPath()
--	if err != nil {
--		return -1, err
--	}
-+func lookupGidByName(nameOrGid string, groupFile string) (int, error) {
- 	groups, err := user.ParseGroupFileFilter(groupFile, func(g user.Group) bool {
- 		return g.Name == nameOrGid || strconv.Itoa(g.Gid) == nameOrGid
+ func lookupGID(name string) (int, error) {
+ 	groupFile, err := user.GetGroupPath()
+@@ -21,6 +22,12 @@
+ 		return g.Name == name || strconv.Itoa(g.Gid) == name
  	})
+ 	if err != nil {
++		groups, err = user.ParseGroupFileFilter(unixExtrausersPath, func(g user.Group) bool {
++			return g.Name == name || strconv.Itoa(g.Gid) == name
++		})
++		if err != nil {
++			return -1, errors.Wrapf(err, "error parsing extrausers groups for %s", name)
++		}
+ 		return -1, errors.Wrapf(err, "error parsing groups for %s", name)
+ 	}
+ 	if len(groups) > 0 {

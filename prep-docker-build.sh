@@ -8,6 +8,7 @@
 for patch in "$SNAPDIR"/patches/*.patch; do
 	echo "Applying $(basename "$patch") ..."
 	patch \
+		-d components/engine \
 		--batch \
 		--forward \
 		--strip 1 \
