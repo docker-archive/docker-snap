@@ -1,5 +1,5 @@
 name: docker
-version: 17.06.0-ce-rc4
+version: 17.06.0-ce-1
 summary: Docker Linux container runtime
 description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
 
@@ -17,6 +17,11 @@ plugs:
 slots:
   docker-daemon:
     interface: docker
+  docker-executables:
+    content: docker-executables
+    interface: content
+    read:
+      - .
 
 apps:
   docker:
@@ -45,6 +50,15 @@ apps:
       - docker-cli
       - network
       - home
+
+  machine:
+    command: docker-wrapper docker-machine
+    plugs:
+      - docker-cli
+      - network
+      - home
+      - network-bind
+
   help:
     command: help
 
@@ -74,7 +88,7 @@ parts:
 
   docker:
     plugin: shell
-    source: https://github.com/docker/docker-ce/archive/v17.06.0-ce-rc4.tar.gz
+    source: https://github.com/docker/docker-ce/archive/v17.06.0-ce.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-eux', '-o', 'pipefail']
@@ -120,7 +134,7 @@ parts:
 
   containerd:
     plugin: shell
-    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce-rc4/components/engine/hack/dockerfile/binaries-commits
+    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce/components/engine/hack/dockerfile/binaries-commits
     source: https://github.com/containerd/containerd/archive/cfb82a876ecc11b5ca0977d1733adbe58599088a.tar.gz
     source-type: tar
     shell: bash
@@ -146,7 +160,7 @@ parts:
 
   runc:
     plugin: shell
-    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce-rc4/components/engine/hack/dockerfile/binaries-commits
+    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce/components/engine/hack/dockerfile/binaries-commits
     source: https://github.com/opencontainers/runc/archive/2d41c047c83e09a6d61d464906feb2a2f3c52aa4.tar.gz
     source-type: tar
     shell: bash
@@ -177,7 +191,7 @@ parts:
 
   libnetwork:
     plugin: shell
-    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce-rc4/components/engine/hack/dockerfile/binaries-commits
+    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce/components/engine/hack/dockerfile/binaries-commits
     source: https://github.com/docker/libnetwork/archive/7b2b1feb1de4817d522cc372af149ff48d25028e.tar.gz
     source-type: tar
     shell: bash
@@ -207,7 +221,7 @@ parts:
     plugin: cmake
     source: https://github.com/krallin/tini.git
     source-type: git
-    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce-rc4/components/engine/hack/dockerfile/binaries-commits
+    # from  https://github.com/docker/docker-ce/blob/v17.06.0-ce/components/engine/hack/dockerfile/binaries-commits
     source-commit: 949e6facb77383876aeff8a6944dde66b3089574
     organize:
       'bin/tini-static': bin/docker-init
@@ -217,7 +231,31 @@ parts:
   compose:
     plugin: python
     python-version: python2
-    source: https://github.com/docker/compose/archive/1.14.0-rc2.tar.gz
+    source: https://github.com/docker/compose/archive/1.14.0.tar.gz
     source-type: tar
+
+  machine:
+    plugin: shell
+    source: https://github.com/docker/machine/archive/v0.12.0.tar.gz
+    source-type: tar
+    shell: bash
+    shell-flags: ['-eux', '-o', 'pipefail']
+    shell-command: |
+      export GOROOT="$SNAPDIR/parts/go/install"
+      export PATH="$GOROOT/bin:$PATH"
+      go version
+
+      mkdir -p .gopath/src/github.com/docker
+      ln -sfT "$PWD" .gopath/src/github.com/docker/machine
+      export GOPATH="$PWD/.gopath"
+
+      pushd .gopath/src/github.com/docker/machine
+      make build
+      popd
+
+      install -d "$SNAPCRAFT_PART_INSTALL/bin"
+      install -T bin/docker-machine "$SNAPCRAFT_PART_INSTALL/bin/docker-machine"
+    after:
+      - go
 
 # vim:set et ts=2 sw=2:
