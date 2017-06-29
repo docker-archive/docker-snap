@@ -1,5 +1,5 @@
 name: docker
-version: 17.03.1-ce-3
+version: 17.03.2-ce-1
 summary: Docker Linux container runtime
 description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
 
@@ -86,7 +86,7 @@ parts:
 
   docker:
     plugin: shell
-    source: https://github.com/docker/docker/archive/v17.03.1-ce.tar.gz
+    source: https://github.com/docker/docker/archive/v17.03.2-ce.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-eux', '-o', 'pipefail']
@@ -127,7 +127,7 @@ parts:
 
   containerd:
     plugin: shell
-    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L7
+    # from https://github.com/moby/moby/blob/v17.03.2-ce/hack/dockerfile/binaries-commits#L7
     source: https://github.com/docker/containerd/archive/4ab9917febca54791c5f071a9d1f404867857fcc.tar.gz
     source-type: tar
     shell: bash
@@ -154,7 +154,7 @@ parts:
 
   runc:
     plugin: shell
-    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L6
+    # from https://github.com/moby/moby/blob/v17.03.2-ce/hack/dockerfile/binaries-commits#L6
     source: https://github.com/opencontainers/runc/archive/54296cf40ad8143b62dbcaa1d90e520a2136ddfe.tar.gz
     source-type: tar
     shell: bash
@@ -181,7 +181,7 @@ parts:
 
   libnetwork:
     plugin: shell
-    # from https://github.com/docker/docker/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L9
+    # from https://github.com/docker/docker/blob/v17.03.2-ce/hack/dockerfile/binaries-commits#L9
     source: https://github.com/docker/libnetwork/archive/0f534354b813003a754606689722fe253101bc4e.tar.gz
     source-type: tar
     shell: bash
@@ -214,7 +214,7 @@ parts:
     plugin: cmake
     source: https://github.com/krallin/tini.git
     source-type: git
-    # from https://github.com/moby/moby/blob/v17.03.1-ce/hack/dockerfile/binaries-commits#L8
+    # from https://github.com/moby/moby/blob/v17.03.2-ce/hack/dockerfile/binaries-commits#L8
     source-commit: 949e6facb77383876aeff8a6944dde66b3089574
     organize:
       'bin/tini-static': bin/docker-init
@@ -224,7 +224,7 @@ parts:
   compose:
     plugin: python
     python-version: python2
-    source: https://github.com/docker/compose/archive/1.13.0.tar.gz
+    source: https://github.com/docker/compose/archive/1.14.0.tar.gz
     source-type: tar
 
   machine:
