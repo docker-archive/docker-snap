@@ -1,8 +1,8 @@
-diff --git a/cmd/dockerd/daemon_unix.go b/cmd/dockerd/daemon_unix.go
-index b65eb1f..7a70612 100644
---- a/cmd/dockerd/daemon_unix.go
-+++ b/cmd/dockerd/daemon_unix.go
-@@ -44,6 +44,13 @@ func setDefaultUmask() error {
+diff --git a/components/engine/cmd/dockerd/daemon_unix.go b/components/engine/cmd/dockerd/daemon_unix.go
+index 46ef585..647c793 100644
+--- a/components/engine/cmd/dockerd/daemon_unix.go
++++ b/components/engine/cmd/dockerd/daemon_unix.go
+@@ -32,6 +32,13 @@ func setDefaultUmask() error {
  }
  
  func getDaemonConfDir(_ string) string {

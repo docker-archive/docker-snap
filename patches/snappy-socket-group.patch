@@ -1,6 +1,8 @@
---- a/pkg/listeners/group_unix.go	2017-06-16 21:34:02.815267579 +0000
-+++ b/pkg/listeners/group_unix.go	2017-06-16 21:34:02.775269611 +0000
-@@ -11,6 +11,7 @@
+diff --git a/components/engine/pkg/listeners/group_unix.go b/components/engine/pkg/listeners/group_unix.go
+index e1d8774..e27ded5 100644
+--- a/components/engine/pkg/listeners/group_unix.go
++++ b/components/engine/pkg/listeners/group_unix.go
+@@ -11,6 +11,7 @@ import (
  )
  
  const defaultSocketGroup = "docker"
@@ -8,7 +10,7 @@
  
  func lookupGID(name string) (int, error) {
  	groupFile, err := user.GetGroupPath()
-@@ -21,6 +22,12 @@
+@@ -21,6 +22,12 @@ func lookupGID(name string) (int, error) {
  		return g.Name == name || strconv.Itoa(g.Gid) == name
  	})
  	if err != nil {

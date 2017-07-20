@@ -1,7 +1,7 @@
-diff --git a/pkg/chrootarchive/archive_unix.go b/pkg/chrootarchive/archive_unix.go
+diff --git a/components/engine/pkg/chrootarchive/archive_unix.go b/components/engine/pkg/chrootarchive/archive_unix.go
 index f2325ab..84672cd 100644
---- a/pkg/chrootarchive/archive_unix.go
-+++ b/pkg/chrootarchive/archive_unix.go
+--- a/components/engine/pkg/chrootarchive/archive_unix.go
++++ b/components/engine/pkg/chrootarchive/archive_unix.go
 @@ -30,7 +30,7 @@ func untar() {
  		fatal(err)
  	}

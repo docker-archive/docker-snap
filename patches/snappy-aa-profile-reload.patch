@@ -1,7 +1,7 @@
-diff --git a/daemon/apparmor_default.go b/daemon/apparmor_default.go
+diff --git a/components/engine/daemon/apparmor_default.go b/components/engine/daemon/apparmor_default.go
 index 2a418b2..278f320 100644
---- a/daemon/apparmor_default.go
-+++ b/daemon/apparmor_default.go
+--- a/components/engine/daemon/apparmor_default.go
++++ b/components/engine/daemon/apparmor_default.go
 @@ -4,6 +4,7 @@ package daemon
  
  import (
