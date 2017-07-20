@@ -8,7 +8,6 @@
 for patch in "$SNAPDIR"/patches/*.patch; do
 	echo "Applying $(basename "$patch") ..."
 	patch \
-		-d components/engine \
 		--batch \
 		--forward \
 		--strip 1 \
@@ -16,20 +15,6 @@ for patch in "$SNAPDIR"/patches/*.patch; do
 	echo
 done
 
-# aww, can't use "git ls-remote" on launchpad:
-#  fatal: unable to access 'https://github.com/docker/docker.git/': Could not resolve host: github.com
-# Loïc: you can, but only during the pull phase
-DOCKER_GITCOMMIT="$(
-	git ls-remote --tags \
-		https://github.com/docker/docker.git \
-		"refs/tags/v$(< VERSION)^{}" \
-	| cut -b1-7 \
-	|| echo "v$(< VERSION)"
-)-snap"
-if git rev-parse &> /dev/null; then
-	DOCKER_GITCOMMIT+="-$(git rev-parse --short HEAD)"
-fi
-export DOCKER_GITCOMMIT
 export BUILDTIME="$(
 	date --rfc-3339 ns 2>/dev/null | sed -e 's/ /T/' \
 		|| date -u
