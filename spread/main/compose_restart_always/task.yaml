@@ -1,0 +1,25 @@
+summary: Test container restart policy with docker compose
+
+execute: |
+    # run a container which applied always restart policy
+    compose_file=/var/snap/docker/common/docker-compose.yaml
+    sudo /bin/su -c "echo 'test:
+        image: alpine
+        command: sleep 1
+        restart: always' > $compose_file"
+    sudo docker.compose -f $compose_file up -d
+
+    # check the restart policy and maximum retry count
+    id=$(sudo docker.compose -f $compose_file ps -q test)
+    restart_policy=$(sudo docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' $id)
+    [ $restart_policy = "always" ] || exit 1
+
+    # wait a bit and let service restarts several times
+    sleep 6
+    
+    # check the actual restart count
+    restart_count=$(sudo docker inspect -f '{{.RestartCount}}' $id)
+    [ $restart_count -gt 1 ] || exit 1
+
+    # remove the container
+    sudo docker rm -f $id

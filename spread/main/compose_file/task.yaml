@@ -1,0 +1,21 @@
+summary: Test a service built using docker compose
+
+execute: |
+    # launch a service running in the background
+    compose_file=/var/snap/docker/docker-compose.yaml
+    sudo /bin/su -c "echo 'test:
+            image: ubuntu
+            command: bash
+            tty: true' > $compose_file"
+    sudo docker.compose -f $compose_file up -d
+
+    # check if the service exists and status
+    id=$(sudo docker.compose -f $compose_file ps -q test)
+    [ `sudo docker inspect -f '{{.State.Status}}' $id` = "running" ] || exit 1
+
+    # kill the service
+    sudo docker.compose -f $compose_file kill
+    [ `sudo docker inspect -f '{{.State.ExitCode}}' $id` = 137 ] || exit 1
+
+    # remove the container
+    sudo docker.compose -f $compose_file rm -v -f

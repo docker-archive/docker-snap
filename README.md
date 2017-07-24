@@ -83,3 +83,35 @@ Developing the `docker` snap package is typically performed on a "classic" Ubunt
       :network              docker
       :network-bind         docker
       docker:docker-daemon  docker:docker-cli
+
+## Testing
+We rely on spread (https://github.com/snapcore/spread) to run full-system test on Ubuntu core 16. We also provides a uitlity script(run-spread-test.sh) to launch the spread test.  It will
+
+1. fetch necessary snaps one by one( kernel, core, gadget) and build customized Ubuntu core image with them.
+2. boot the  image in qmeu emulator
+3. deploy test suits in  emulation environment
+4. run full-system test
+
+Before you start spread test, you need to install qemu-kvm package in advance as we use it as the backend to run the spread test
+
+      $ sudo apt install qemu-kvm
+
+Also you need a classic-mode supported spread tool to launch kvm from its its context. You can either build the spread from this [branch](https://github.com/rmescandon/spread/tree/snap-as-classic) or download the spread snap package [here](http://people.canonical.com/~gary-wzl77/spread_2017.05.24_amd64.snap).
+
+To start spread test, you could either build the docker snap locally in advance
+and then run the following command
+      $ snapcraft
+      $ ./run-spread-tests.sh
+
+or specify --test-from-channel to fetch snap from store from the specific channel. The snap from `candidate` channel is used by default if `--channel` option is not specified.
+
+      $ ./run-spread-tests.sh --test-from-channel --channel=stable
+
+In order to run individual spread test, please run the following command
+
+      $ spread spread/main/installation
+
+This will run test case under spread/main/installation folder.
+You can also specify the `SNAP_CHANNEL` environment variable to install snap from specific channel to run individual spread test
+
+      $ SNAP_CHANNEL=candidate spread spread/main/update_policy

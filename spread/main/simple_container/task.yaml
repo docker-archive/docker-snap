@@ -1,0 +1,23 @@
+summary: Test a simple container running the alpine image
+
+execute: |
+    # pull alpine image
+    sudo docker pull alpine
+
+    # simply print out hello world and remove the container when it exits
+    sudo docker run --rm -i alpine echo 'Hello world'
+
+    # check if there is a container are running the alpine image?
+    [ `sudo docker ps -a | grep alpine | wc -l` = 0 ] || exit 1
+    
+    # run container in background 
+    id=$(sudo docker run -dit alpine echo 'Hello world')
+
+    # inspect several docker object's info
+    [ `sudo docker inspect -f '{{.Path}}' $id` = "echo" ] || exit 1
+    [ `sudo docker inspect -f '{{.Config.Image}}' $id` = "alpine" ] || exit 1
+    [ `sudo docker inspect -f '{{.State.Status}}' $id` = "exited" ] || exit 1
+    [ `sudo docker inspect -f '{{.State.ExitCode}}' $id` = 0 ] || exit 1
+
+    # remove the container
+    sudo docker rm -f $id

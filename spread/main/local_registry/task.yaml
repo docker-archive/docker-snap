@@ -1,0 +1,29 @@
+summary: Test build a local registry.
+
+execute: |
+ # specify and create a folder where stores htpasswd file 
+ auth_folder=$HOME/auth && mkdir -p $auth_folder
+
+ # create a htpasswd file where stores the authentication information. 
+ sudo docker run --entrypoint htpasswd registry:2 -Bbn user passwd > $auth_folder/htpasswd
+
+ # launch the local registry
+ sudo docker run -d -p 5000:5000 --restart=always --name registry \
+   -v $auth_folder:/auth \
+   -e "REGISTRY_AUTH=htpasswd" \
+   -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+   -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+    registry:2
+
+ # pull ubuntu image from public dockerhub
+ sudo docker pull ubuntu
+
+ # tag the image, push to local registry and pull from local registry
+ sudo docker tag ubuntu localhost:5000/ubuntu
+ sudo docker login --username user --password passwd localhost:5000
+ sudo docker push localhost:5000/ubuntu
+ sudo docker pull localhost:5000/ubuntu
+
+ # stop and remove the registry
+ sudo docker stop registry
+ sudo docker rm -v registry

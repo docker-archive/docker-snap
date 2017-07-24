@@ -1,0 +1,9 @@
+summary: Test all necessary plugs/slots are connected upon installatio
+
+execute: |
+    snap interfaces | grep -Pzq ":docker-support +[a-z,-]*docker:privileged,docker:support"
+    snap interfaces | grep -Pzq ":docker-daemon +[a-z,-]*docker:docker-cli"
+    snap interfaces | grep -Pzq ":network +[a-z,-]*docker"
+    snap interfaces | grep -Pzq ":home +[a-z,-]*docker"
+    snap interfaces | grep -Pzq ":firewall-control +[a-z,-]*docker"
+    snap interfaces | grep -Pzq ":network-bind +[a-z,-]*docker"

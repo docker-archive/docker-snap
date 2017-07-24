@@ -1,0 +1,21 @@
+summary: Test create a simple image with dockerfile
+
+execute: |
+    # create a dockerfile 
+    dockerfile=$(cat <<EOF
+      FROM alpine
+      CMD echo "hello-world"
+    EOF
+    )
+    # build an image from stdin
+    echo "$dockerfile" | sudo docker build -t test -
+
+    # run the container
+    id=$(sudo docker run -dit test)
+
+    # wait a bit and check the status 
+    sleep 1
+    [ `sudo docker inspect -f '{{.State.Status}}' $id` = "exited" ] || exit 1
+
+    #rm the container
+    sudo docker rm -f $id 

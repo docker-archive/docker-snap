@@ -1,0 +1,24 @@
+summary: Test kill a container
+
+execute: |
+    # run container in the background
+    id=$(sudo docker run -dit --name test ubuntu bash)
+    sudo docker ps --no-trunc | grep $id
+
+    # kill it and check the status code
+    sudo docker kill $id
+    [ `sudo docker inspect -f '{{.State.Status}}' $id` = "exited" ] || exit 1
+    [ `sudo docker inspect -f '{{.State.ExitCode}}' $id` != 0 ] || exit 1
+
+    # start the container again
+    sudo docker start $id
+    sudo docker ps --no-trunc | grep $id
+
+    # rename the container and kill again
+    sudo docker rename $id test_2
+    sudo docker kill $id
+    [ `sudo docker inspect -f '{{.State.Status}}' $id` = "exited" ] || exit 1
+    [ `sudo docker inspect -f '{{.State.ExitCode}}' $id` != 0 ] || exit 1
+
+    # remove the container 
+    sudo docker rm -f $id

@@ -1,0 +1,43 @@
+summary: Test basic docker compose subcommand.
+
+execute: |
+ # read docker.compose file from stdin
+ yml=$(cat <<EOF
+ test:
+   image: ubuntu
+   command: bash
+   tty: true
+ EOF
+ )
+ # launch the service
+ echo "$yml" | sudo docker.compose -f - pull
+ echo "$yml" | sudo docker.compose -f - create
+ echo "$yml" | sudo docker.compose -f - start
+
+ # check the current status
+ id=$(echo "$yml" | sudo docker.compose -f - ps -q test)
+ [ `sudo docker inspect -f '{{.State.Status}}' $id` != "running" ] && exit 1
+
+ # stop it and check the current status
+ echo "$yml" | sudo docker.compose -f - stop
+ [ `sudo docker inspect -f '{{.State.Status}}' $id` != "exited" ] && exit 1
+
+ # scale service to 3 instances
+ echo "$yml" | sudo docker.compose -f - up -d --scale test=3
+
+ # check the number instrances
+ ret=$(sudo docker ps -a | grep 'test' | grep -c 'Up')
+ [ $ret != 3 ] && exit 1
+
+ # scale service to 1 instrance
+ echo "$yml" | sudo docker.compose -f - up -d --scale test=1
+ 
+ # check the number instrances
+ ret=$(sudo docker ps -a | grep 'test' | grep -c 'Up')
+ [ $ret != 1 ] && exit 1
+
+ # stops containers and removes containers
+ echo "$yml" | sudo docker.compose -f - down
+ sudo docker ps -a | grep 'test' || exit 0
+ echo "The container is still available"
+ exit 1

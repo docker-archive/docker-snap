@@ -1,0 +1,20 @@
+summary: Test save and load a image.
+
+execute: |
+    # pull alpine image.
+    sudo docker pull busybox
+
+    # save alpine image.
+    sudo docker save busybox > $HOME/busybox.tar
+
+    # remove the image.
+    sudo docker rmi busybox
+
+    # check if the image exists.
+    [ `sudo docker images -a | grep busybox | wc -l` = 0 ] || exit 1
+
+    # load the saved image.
+    sudo docker load < $HOME/busybox.tar
+    
+    # check if it's loaded.
+    [ `sudo docker images -a | grep busybox | wc -l` = 1 ] || exit 1

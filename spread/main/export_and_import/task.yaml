@@ -1,0 +1,20 @@
+summary: Test export and import a container.
+
+execute: |
+    # run container in the background
+    id=$(sudo docker run -dit --name test alpine echo 'Hello world')
+
+    #export a container's filesystem in a read&write path for docker snap.
+    tarball_file=$HOME/alpine.tar
+    sudo docker export $id > $tarball_file
+    sudo docker rm -f $id
+
+    #import the content from tarball file 
+    cat $tarball_file | sudo docker import - spread/alpine:v1.0
+    sudo docker images -a | grep 'spread/alpine'
+
+    #launch a container with the imported image.
+    sudo docker run --rm -dit spread/alpine:v1.0 echo 'hello world'
+
+    #remove the imported image.
+    sudo docker rmi -f spread/alpine:v1.0
