@@ -1,0 +1,29 @@
+summary: Test run a container with --init option
+
+execute: |
+    # run container in the background
+    id=$(sudo docker run -dit ubuntu bash)
+
+    # check the pid
+    pid=$(sudo docker exec -t $id ps auxf | grep bash | awk '{print $2}')
+    [ $pid = 1 ] || exit 1
+    
+    # stop the contianer
+    sudo docker stop $id
+
+    # remove the container 
+    sudo docker rm -f $id
+
+    # run container with --init option 
+    id=$(sudo docker run -dit --init ubuntu bash)
+    
+    # check the pid
+    pid=$(sudo docker exec -t $id ps auxf | grep init | awk '{print $2}')
+    [ $pid = 1 ] || exit 1
+
+    # stop the contianer
+    sudo docker stop $id
+
+    # remove the container 
+    sudo docker rm -f $id
+
