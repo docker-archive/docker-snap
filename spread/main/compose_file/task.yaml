@@ -2,7 +2,7 @@ summary: Test a service built using docker compose
 
 execute: |
     # launch a service running in the background
-    compose_file=/var/snap/docker/docker-compose.yaml
+    compose_file=/var/snap/docker/common/docker-compose.yaml
     sudo /bin/su -c "echo 'test:
             image: ubuntu
             command: bash
