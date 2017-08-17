@@ -6,11 +6,3 @@ wait_for_systemd_service() {
 	done
 	sleep 1
 }
-
-clean_all_containers() {
-   sudo docker rm -f $(sudo docker ps -qa)
-}
-
-clean_all_images() {
-   sudo docker rmi $(sudo docker images -aq)
-}
