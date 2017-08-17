@@ -63,7 +63,7 @@ while [ -n "$1" ]; do
 done
 
 SPREAD_QEMU_PATH="$HOME/.spread/qemu"
-if [ `which spread` = /snap/bin/spread ] ; then
+if [ "`which spread`" = "/snap/bin/spread" ] ; then
 	current_version=`readlink /snap/spread/current`
 	SPREAD_QEMU_PATH="$HOME/snap/spread/$current_version/.spread/qemu/"
 fi

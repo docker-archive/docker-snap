@@ -1,4 +1,4 @@
-summary: Test all necessary plugs/slots are connected upon installatio
+summary: Test all necessary plugs/slots are connected upon installation
 
 execute: |
     snap interfaces | grep -Pzq ":docker-support +[a-z,-]*docker:privileged,docker:support"

@@ -87,26 +87,33 @@ Developing the `docker` snap package is typically performed on a "classic" Ubunt
 ## Testing
 We rely on spread (https://github.com/snapcore/spread) to run full-system test on Ubuntu Core 16. We also provide a utility script (run-spread-test.sh) to launch the spread test. It will
 
-1. Fetch primary snaps( kernel, core, gadget) and build customized Ubuntu Core image with them
+1. Fetch primary snaps( kernel, core, gadget) and build custom Ubuntu Core image with them
 2. Boot the image in qemu emulator
 3. Deploy test suits in emulation environment
 4. Execute full-system testing
 
-Before you start spread test, you need to install qemu-kvm package in advance since we use it as the backend to run the spread test
+Firstly, install ubuntu-image tool since we need to create a custom Ubuntu Core image during test preparation.
+
+      $ sudo snap install --beta --classic ubuntu-image
+
+Secondly, install qemu-kvm package since we use it as the backend to run the spread test.
 
       $ sudo apt install qemu-kvm
 
 Meanwhile, you need a classic-mode supported spread binary to launch kvm from its context. You can either build the spread from this [branch](https://github.com/rmescandon/spread/tree/snap-as-classic) or download the spread snap package [here](http://people.canonical.com/~gary-wzl77/spread_2017.05.24_amd64.snap).
 
-To execute spread test, you can build the docker snap locally in advance and then run the following command
+      $ sudo snap install --classic --dangerous spread_2017.05.24_amd64.snap
+
+All set, you can build the docker snap locally in advance and then execute spread test with the following commands.
+
       $ snapcraft
       $ ./run-spread-tests.sh
 
-In comparison with local build, you can also specify --test-from-channel to fetch the snap from the specific channel of the store. The snap from `candidate` channel is used by default if `--channel` option is not specified.
+In comparison with local build, you can also specify --test-from-channel to fetch the snap from the specific channel of the store. The snap from `candidate` channel is used by default as test target if `--channel` option is not specified.
 
       $ ./run-spread-tests.sh --test-from-channel --channel=stable
 
-In order to run an individual spread test, please run the following command
+In order to run an individual spread test, please run the following command.
 
       $ spread spread/main/installation
 
