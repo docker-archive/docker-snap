@@ -11,7 +11,7 @@ execute: |
 
     #import the content from tarball file 
     cat $tarball_file | sudo docker import - spread/alpine:v1.0
-    sudo docker images -a | grep 'spread/alpine'
+    sudo docker images -a | MATCH 'spread/alpine'
 
     #launch a container with the imported image.
     sudo docker run --rm -dit spread/alpine:v1.0 echo 'hello world'

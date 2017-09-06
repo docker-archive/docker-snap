@@ -3,7 +3,7 @@ summary: Test kill a container
 execute: |
     # run container in the background
     id=$(sudo docker run -dit --name test ubuntu bash)
-    sudo docker ps --no-trunc | grep $id
+    sudo docker ps --no-trunc | MATCH $id
 
     # kill it and check the status code
     sudo docker kill $id
@@ -12,7 +12,7 @@ execute: |
 
     # start the container again
     sudo docker start $id
-    sudo docker ps --no-trunc | grep $id
+    sudo docker ps --no-trunc | MATCH $id
 
     # rename the container and kill again
     sudo docker rename $id test_2

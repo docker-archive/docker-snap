@@ -3,7 +3,7 @@ summary: Test copy a file between a container and local filesystem
 execute: |
     # copy a file between containers and host filesystem
     ID=$(sudo docker run -dit alpine touch /home/file)
-    sudo docker diff $ID | grep 'A /home/file'
+    sudo docker diff $ID | MATCH 'A /home/file'
 
     # a readable&writable path for docker snap on host filesystem
     file_path=/var/snap/docker/common/
@@ -11,7 +11,7 @@ execute: |
 
     # copy file back to the container
     sudo docker cp $file_path/file $ID:/home/new_file
-    sudo docker diff $ID | grep 'A /home/new_file'
+    sudo docker diff $ID | MATCH 'A /home/new_file'
 
     #remove the container
     sudo docker rm -f $ID

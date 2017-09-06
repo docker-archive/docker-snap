@@ -6,7 +6,7 @@ execute: |
     sudo docker commit $id alpine-spread
 
     # check if we have new image added.
-    sudo docker images | grep 'alpine-spread'
+    sudo docker images | MATCH 'alpine-spread'
 
     # check if we have new folder added in the new images.
     sudo docker run alpine [ -d /home/test ] && exit 1 || echo 'Directory not found'
