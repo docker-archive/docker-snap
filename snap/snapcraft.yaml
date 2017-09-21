@@ -147,7 +147,7 @@ parts:
       ln -sfT "$PWD" .gopath/src/github.com/containerd/containerd
       export GOPATH="$PWD/.gopath"
 
-      make GIT_COMMIT= GIT_BRANCH= LDFLAGS=
+      make LDFLAGS="-X github.com/containerd/containerd.GitCommit=6e23458c129b551d5c9871e5174f6b1b7f6d1170"
 
       install -d "$SNAPCRAFT_PART_INSTALL/bin"
       install -T bin/containerd "$SNAPCRAFT_PART_INSTALL/bin/docker-containerd"
@@ -174,7 +174,7 @@ parts:
       ln -sfT "$PWD" .gopath/src/github.com/opencontainers/runc
       export GOPATH="$PWD/.gopath"
       pushd .gopath/src/github.com/opencontainers/runc
-      make BUILDTAGS='seccomp apparmor selinux' COMMIT=
+      make BUILDTAGS='seccomp apparmor selinux' COMMIT=810190ceaa507aa2727d7ae6f4790c76ec150bd2
       popd
 
       install -d "$SNAPCRAFT_PART_INSTALL/bin"
