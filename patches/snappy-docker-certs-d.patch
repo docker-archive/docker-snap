@@ -1,20 +1,18 @@
 diff --git a/components/engine/registry/config_unix.go b/components/engine/registry/config_unix.go
-index fdc39a1..655bdb5 100644
+index b81d24933c..7884af94af 100644
 --- a/components/engine/registry/config_unix.go
 +++ b/components/engine/registry/config_unix.go
-@@ -3,14 +3,29 @@
+@@ -2,11 +2,28 @@
+ 
  package registry
  
- import (
++import (
 +	"os"
++)
 +
- 	"github.com/spf13/pflag"
- )
- 
  var (
  	// CertsDir is the directory where certificates are stored
--	CertsDir = "/etc/docker/certs.d"
-+	CertsDir = defaultCertificatesDirectory()
+ 	CertsDir = "/etc/docker/certs.d"
  )
  
 +func defaultCertificatesDirectory() string {
