@@ -1,0 +1,19 @@
+summary: Test create a new image from a container’s changes with commit sudcommand
+
+execute: |
+    # create a new folder in a container and commit the change.
+    id=$(sudo docker run -dit alpine mkdir /home/test)
+    sudo docker commit $id alpine-spread
+
+    # check if we have new image added.
+    sudo docker images | MATCH 'alpine-spread'
+
+    # check if we have new folder added in the new images.
+    sudo docker run alpine [ -d /home/test ] && exit 1 || echo 'Directory not found'
+    sudo docker run alpine-spread [ -d /home/test ] && echo 'Directory found' || exit 1
+
+    # remote all relevant containers.
+    sudo docker rm -f $(sudo docker ps -q -a)
+
+    # remove the new added image.
+    sudo docker rmi alpine-spread

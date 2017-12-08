@@ -1,7 +1,7 @@
-diff --git a/registry/config_unix.go b/registry/config_unix.go
-index d692e8e..5219c1d 100644
---- a/registry/config_unix.go
-+++ b/registry/config_unix.go
+diff --git a/components/engine/registry/config_unix.go b/components/engine/registry/config_unix.go
+index fdc39a1..655bdb5 100644
+--- a/components/engine/registry/config_unix.go
++++ b/components/engine/registry/config_unix.go
 @@ -3,14 +3,29 @@
  package registry
  

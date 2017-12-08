@@ -1,0 +1,9 @@
+summary: Test all necessary plugs/slots are connected upon installation
+
+execute: |
+    snap interfaces | MATCH ":docker-support +[a-z,-]*docker:privileged,docker:support"
+    snap interfaces | MATCH ":docker-daemon +[a-z,-]*docker:docker-cli"
+    snap interfaces | MATCH ":network +[a-z,-]*docker"
+    snap interfaces | MATCH ":home +[a-z,-]*docker"
+    snap interfaces | MATCH ":firewall-control +[a-z,-]*docker"
+    snap interfaces | MATCH ":network-bind +[a-z,-]*docker"

@@ -1,0 +1,25 @@
+type: system-user
+authority-id: 4BKZlf4WMNBKgQfij0rftmp5BzDdVhlf
+brand-id: 4BKZlf4WMNBKgQfij0rftmp5BzDdVhlf
+email: test@localhost
+models:
+  - pc
+name: Default Test User
+password: $6$OCvKy4w/Ppxp7IvC$WPzWiIW.4y18h9htjbOuxLZ.sjQ5M2hoSiEu3FpMU0PMdHQuQdBOqvk8p6DMdS/R/nU/rXidClD23CbSkSgp30
+series:
+  - 16
+since: 2016-10-24T07:12:10+00:00
+until: 2017-10-24T07:12:10+00:00
+username: test
+sign-key-sha3-384: a4qX7md6GQGNcZc_cmWPBStTq4RNCnGTzF-4usF5wFylQ-xZQej-SD6prx8Yl89O
+
+AcLBXAQAAQoABgUCWBBOJAAKCRAVoE002xqmOKaRD/0cEKWb2nbwhk+BTgOrYZHrwzjbIWTZznDh
+xCD6JWF/yr9br1vEmRz2zCNPPWZgFH9HaJ+mT/lktWIs7VVMIdwMDWYOR8P9rdWM/Jx6iyB3z0OI
+YO31zaU4XLyolv/YSj/nFXMMD+jIeE4l8j4AtCSJwd7ZS9Jz8F/RfrD8EpG0JU1F55lq8MC0mjZ4
+ul5ws8k9UiP8nA5IAG30NvvReiUGYqtdkO43eQmy88WABL95MbFsbfEk4/VduG0Gt3y/T8vDDcF6
+NJEm8L+O9IXnPBAje0Ve0NX3YtOE3CDTkYRKR7xFFJq2cJVCSvf9CsorREg4KyfagIdMKDSa5Tiq
+FzoAJTfI0ltq5cAnLImtxFKulJ+AnGUNMLrKFr1H0FGtqTZBfs/PcIxy0qY0YDXSF4/9F2PUBdQS
+tSmN6pT9t1FCGy2Rf5n3QV4e0R2JzS6Kx+vdbPMYqhssQosLU5GwlWj8UbevtphAGf8u8nLBDYWs
+MNIPi0IrPmzIewZBD05A6a8T+oHZ9dIg5SAnJ4gmz0sCzNDKarvYqLpcU1rZzu78/UypbHXDvBAt
+gnxYpD6WHR2aHSeyx3WvOp130jFco2/55M0RTEm50isO1uv2DqTn9ULkBdCrG/zOqEmZgY18ds3P
+yTaAbaIAqUe7scpAHY0a31tfnXq8cRyEX03e9g2Mrg==

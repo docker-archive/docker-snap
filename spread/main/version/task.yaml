@@ -1,0 +1,19 @@
+summary: Test docker snap basic information is correct.
+
+execute: |
+    # docker snap version
+    snap_ver=$(snap list | grep docker | awk '{print $2}')
+    docker_ver=$(sudo docker version | grep Version | uniq | awk '{print $2}')
+    [ "$snap_ver" = "$docker_ver" ] || exit 1
+
+    # cpu architures 
+    arch=$(sudo docker info | grep  "Architecture" | awk -F ': ' '{print $2}')
+    [ "$arch" = "x86_64" ] || exit 1
+
+    # host machine
+    os=$(sudo docker info | grep  "Operating System" | awk -F ': ' '{print $2}')
+    [ "$os" = "Ubuntu Core 16" ] || exit 1
+
+    # storage backend driver
+    driver=$(sudo docker info | grep  "Storage Driver" | awk -F ': ' '{print $2}')
+    [ "$driver" = "aufs" ] || exit 1

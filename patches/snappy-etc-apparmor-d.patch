@@ -1,8 +1,8 @@
-diff --git a/profiles/apparmor/apparmor.go b/profiles/apparmor/apparmor.go
-index 51dfa5c..4def938 100644
---- a/profiles/apparmor/apparmor.go
-+++ b/profiles/apparmor/apparmor.go
-@@ -16,11 +16,23 @@ import (
+diff --git a/components/engine/profiles/apparmor/apparmor.go b/components/engine/profiles/apparmor/apparmor.go
+index 48b41c5..67f3a2f 100644
+--- a/components/engine/profiles/apparmor/apparmor.go
++++ b/components/engine/profiles/apparmor/apparmor.go
+@@ -16,9 +16,21 @@ import (
  
  var (
  	// profileDirectory is the file store for apparmor profiles and macros.

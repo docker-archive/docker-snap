@@ -1,0 +1,13 @@
+{
+  "type": "system-user",
+  "authority-id": "4BKZlf4WMNBKgQfij0rftmp5BzDdVhlf",
+  "brand-id": "4BKZlf4WMNBKgQfij0rftmp5BzDdVhlf",
+  "series": ["16"],
+  "models": ["pc"],
+  "name": "Default Test User",
+  "username": "test",
+  "email": "test@localhost",
+  "password": "$6$OCvKy4w/Ppxp7IvC$WPzWiIW.4y18h9htjbOuxLZ.sjQ5M2hoSiEu3FpMU0PMdHQuQdBOqvk8p6DMdS/R/nU/rXidClD23CbSkSgp30",
+  "since": "2016-10-24T07:12:10+00:00",
+  "until": "2017-10-24T07:12:10+00:00"
+}

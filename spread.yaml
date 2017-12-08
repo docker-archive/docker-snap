@@ -1,0 +1,53 @@
+#
+# Copyright (C) 2015, 2016 Canonical Ltd
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+project: docker
+
+environment:
+    PROJECT_PATH: /home/docker
+    TESTSLIB: $PROJECT_PATH/spread/lib
+    SNAP_NAME: docker
+    # Allow the host to pass the channel to use for the test rim
+    SNAP_CHANNEL: $(HOST:echo $SNAP_CHANNEL)
+
+backends:
+    qemu:
+        systems:
+            - ubuntu-core-16:
+                username: test
+                password: test
+
+# Put this somewhere where we have read-write access
+path: /home/docker
+
+exclude:
+  - .git
+
+prepare: |
+  . $TESTSLIB/prepare-all.sh
+
+# Fetching the image from dockerhub is time-consuming under some conditions, 
+# e.g network poor/unstable.
+kill-timeout: 30m 
+
+suites:
+    spread/main/:
+        summary: Full-system tests for the docker snap
+        systems:
+            - ubuntu-core-16
+        prepare: |
+            . $TESTSLIB/prepare.sh
+        restore-each: |
+            . $TESTSLIB/restore-each.sh

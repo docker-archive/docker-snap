@@ -1,0 +1,28 @@
+summary: Test container restart policy with always applied
+
+execute: |
+ # read docker file from stdin and build the image
+ dockerfile=$(cat <<EOF
+   FROM alpine
+   CMD sleep 1; exit 1
+ EOF
+ )
+ echo "$dockerfile" | sudo docker build -t image -
+
+ # run a container which applied always restart policy
+ # if the container exits with a non-zero exit status
+ id=$(sudo docker run --restart always -dit image)
+
+ # check the restart policy and maximum retry count
+ restart_policy=$(sudo docker inspect  -f '{{.HostConfig.RestartPolicy.Name}}' $id)
+ [ $restart_policy = "always" ] || exit 1
+
+ # wait a bit and let service restarts several times
+ sleep 6
+
+ # check the actual restart count
+ restart_count=$(sudo docker inspect -f '{{.RestartCount}}' $id)
+ [ $restart_count -gt 1 ] || exit 1
+
+ # remove the container
+ sudo docker rm -f $id
