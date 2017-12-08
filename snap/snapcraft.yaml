@@ -1,5 +1,5 @@
 name: docker
-version: 17.06.1-ce
+version: 17.06.2-ce
 summary: Docker Linux container runtime
 description: Docker complements kernel namespacing with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
 
@@ -80,13 +80,12 @@ parts:
     build-packages:
       - golang-go
       - rsync
-      - build-essential
       - netbase
       - python3-pyelftools
 
   docker:
     plugin: shell
-    source: https://github.com/docker/docker-ce/archive/v17.06.1-ce-rc1.tar.gz
+    source: https://github.com/docker/docker-ce/archive/v17.06.2-ce.tar.gz
     source-type: tar
     shell: bash
     shell-flags: ['-eux', '-o', 'pipefail']
@@ -133,7 +132,7 @@ parts:
 
   containerd:
     plugin: shell
-    # from  https://github.com/docker/docker-ce/blob/v17.06.1-ce-rc1/components/engine/hack/dockerfile/binaries-commits
+    # from  https://github.com/docker/docker-ce/blob/v17.06.2-ce/components/engine/hack/dockerfile/binaries-commits
     source: https://github.com/containerd/containerd/archive/6e23458c129b551d5c9871e5174f6b1b7f6d1170.tar.gz
     source-type: tar
     shell: bash
@@ -159,7 +158,7 @@ parts:
 
   runc:
     plugin: shell
-    # from  https://github.com/docker/docker-ce/blob/v17.06.1-ce-rc1/components/engine/hack/dockerfile/binaries-commits
+    # from  https://github.com/docker/docker-ce/blob/v17.06.2-ce/components/engine/hack/dockerfile/binaries-commits
     source: https://github.com/opencontainers/runc/archive/810190ceaa507aa2727d7ae6f4790c76ec150bd2.tar.gz
     source-type: tar
     shell: bash
@@ -187,7 +186,7 @@ parts:
 
   libnetwork:
     plugin: shell
-    # from  https://github.com/docker/docker-ce/blob/v17.06.1-ce-rc1/components/engine/hack/dockerfile/binaries-commits
+    # from  https://github.com/docker/docker-ce/blob/v17.06.2-ce/components/engine/hack/dockerfile/binaries-commits
     source: https://github.com/docker/libnetwork/archive/7b2b1feb1de4817d522cc372af149ff48d25028e.tar.gz
     source-type: tar
     shell: bash
@@ -217,7 +216,7 @@ parts:
     plugin: cmake
     source: https://github.com/krallin/tini.git
     source-type: git
-    # from  https://github.com/docker/docker-ce/blob/v17.06.1-ce-rc1/components/engine/hack/dockerfile/binaries-commits
+    # from  https://github.com/docker/docker-ce/blob/v17.06.2-ce/components/engine/hack/dockerfile/binaries-commits
     source-commit: 949e6facb77383876aeff8a6944dde66b3089574
     organize:
       'bin/tini-static': bin/docker-init
@@ -227,7 +226,7 @@ parts:
   compose:
     plugin: python
     python-version: python2
-    source: https://github.com/docker/compose/archive/1.14.0.tar.gz
+    source: https://github.com/docker/compose/archive/1.16.1.tar.gz
     source-type: tar
 
   machine:
