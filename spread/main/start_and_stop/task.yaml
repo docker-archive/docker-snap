@@ -2,7 +2,7 @@ summary: Test start and stop a container
 
 execute: |
     # run container in the background
-    id=$(sudo docker run -d --name test redis)
+    id=$(sudo docker run -d redis)
     [ `sudo docker inspect -f '{{.State.Status}}' $id` = "running" ] || exit 1
 
     # stop the container and check the status

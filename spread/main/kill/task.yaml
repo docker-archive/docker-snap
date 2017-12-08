@@ -2,7 +2,7 @@ summary: Test kill a container
 
 execute: |
     # run container in the background
-    id=$(sudo docker run -dit --name test ubuntu bash)
+    id=$(sudo docker run -dit ubuntu bash)
     sudo docker ps --no-trunc | MATCH $id
 
     # kill it and check the status code

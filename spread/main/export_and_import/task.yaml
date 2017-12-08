@@ -2,7 +2,7 @@ summary: Test export and import a container.
 
 execute: |
     # run container in the background
-    id=$(sudo docker run -dit --name test alpine echo 'Hello world')
+    id=$(sudo docker run -dit alpine echo 'Hello world')
 
     #export a container's filesystem in a read&write path for docker snap.
     tarball_file=$HOME/alpine.tar
