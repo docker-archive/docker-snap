@@ -64,6 +64,7 @@ set -- \
 	--exec-root="$SNAP_DATA/run/docker" \
 	--graph="$SNAP_COMMON/var-lib-docker" \
 	--pidfile="$SNAP_DATA/run/docker.pid" \
+	--storage-driver="aufs" \
 	\
 	"$@"
 
