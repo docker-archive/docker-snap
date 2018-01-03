@@ -226,7 +226,7 @@ parts:
   compose:
     plugin: python
     python-version: python2
-    source: https://github.com/docker/compose/archive/1.16.1.tar.gz
+    source: https://github.com/docker/compose/archive/1.18.0.tar.gz
     source-type: tar
 
   machine:

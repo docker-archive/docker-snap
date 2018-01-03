@@ -2,7 +2,7 @@ summary: Test docker snap basic information is correct.
 
 execute: |
     # docker snap version
-    snap_ver=$(snap list | grep docker | awk '{print $2}')
+    snap_ver=$(snap list | grep docker | awk '{print $2}' | cut -f 1,2 -d '-')
     docker_ver=$(sudo docker version | grep Version | uniq | awk '{print $2}')
     [ "$snap_ver" = "$docker_ver" ] || exit 1
 
@@ -16,4 +16,4 @@ execute: |
 
     # storage backend driver
     driver=$(sudo docker info | grep  "Storage Driver" | awk -F ': ' '{print $2}')
-    [ "$driver" = "aufs" ] || exit 1
+    [ "$driver" = "aufs" ] || [ "$driver" = "overlay" ] || [ "$driver" = "overlay2" ] || [ "$driver" = "btrfs" ] || [ "$driver" = "zfs" ] || exit 1
