@@ -1,13 +1,30 @@
-diff --git a/components/engine/pkg/chrootarchive/archive_unix.go b/components/engine/pkg/chrootarchive/archive_unix.go
-index f2325ab..84672cd 100644
---- a/components/engine/pkg/chrootarchive/archive_unix.go
-+++ b/components/engine/pkg/chrootarchive/archive_unix.go
-@@ -30,7 +30,7 @@ func untar() {
- 		fatal(err)
- 	}
+diff --git a/components/engine/pkg/chrootarchive/chroot_linux.go b/components/engine/pkg/chrootarchive/chroot_linux.go
+index f9d7fed..96fedd9 100644
+--- a/components/engine/pkg/chrootarchive/chroot_linux.go
++++ b/components/engine/pkg/chrootarchive/chroot_linux.go
+@@ -18,6 +18,13 @@ import (
+ // Old root is removed after the call to pivot_root so it is no longer available under the new root.
+ // This is similar to how libcontainer sets up a container's rootfs
+ func chroot(path string) (err error) {
++	// LP:1703988 Unfortunately this issue happens when storage backend is one of them(aufs, overlay, btrfs) in snappy,
++	// To unblock this, we use realChroot as a workaround at this moment.
++	if os.Getenv("SNAP") != "" {
++		// Ubuntu Snappy 16.04+
++		return realChroot(path)
++	}
++
+ 	// if the engine is running in a user namespace we need to use actual chroot
+ 	if rsystem.RunningInUserNS() {
+ 		return realChroot(path)
+diff --git a/components/engine/pkg/chrootarchive/diff_unix.go b/components/engine/pkg/chrootarchive/diff_unix.go
+index 33098b3..6f8cffb 100644
+--- a/components/engine/pkg/chrootarchive/diff_unix.go
++++ b/components/engine/pkg/chrootarchive/diff_unix.go
+@@ -111,6 +111,7 @@ func applyLayerHandler(dest string, layer io.Reader, options *archive.TarOptions
+ 	cmd := reexec.Command("docker-applyLayer", dest)
+ 	cmd.Stdin = layer
+ 	cmd.Env = append(cmd.Env, fmt.Sprintf("OPT=%s", data))
++	cmd.Env = append(cmd.Env, fmt.Sprintf("SNAP=%s", os.Getenv("SNAP")))
  
--	if err := chroot(flag.Arg(0)); err != nil {
-+	if err := realChroot(flag.Arg(0)); err != nil {
- 		fatal(err)
- 	}
- 
+ 	outBuf, errBuf := new(bytes.Buffer), new(bytes.Buffer)
+ 	cmd.Stdout, cmd.Stderr = outBuf, errBuf
