@@ -15,7 +15,7 @@ If you are using Ubuntu Core 16,
 
 * Connect the `docker:home` plug as it's not auto-connected by default:
 
-      $ sudo snap connect docker:home
+      $ sudo snap connect docker:home :home
 
 If you are using an alternative snap-compatible Linux distribution ("classic" in snap lingo), and would like to run `docker` as a normal user:
 
