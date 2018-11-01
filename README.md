@@ -4,7 +4,8 @@ This repository contains the source for the `docker` snap package.  The package 
 
 > *NOTE:* The Docker Snap is no longer maintained by Docker, Inc.  The last
 > release version was 17.06.2 and will not be updated.  The future of the Docker
-> Snap is unclear, but it won't be developed here going forward. The source at https://code.launchpad.net/~docker/+git/snapma > may be updated. Questions for that repository may be asked at https://forum.snapcraft.io/.
+> Snap is unclear, but it won't be developed here going forward. The source at https://code.launchpad.net/~docker/+git/snap 
+> may be updated. Questions for that repository may be asked at https://forum.snapcraft.io/.
 
 ## Installation
 
